@@ -1,30 +1,45 @@
-const fs = require('fs');
-const https = require('https');
-const express = require('express');
-const helmet = require('helmet');
-const logger = require('morgan');
-const {connect_db} = require('../constants');
-const path =require('path');
+import { Response } from "express";
+import { db_config } from "../constants";
 
-require('dotenv').config({path : '../.env'});
-
+const fs = require("fs");
+const https = require("https");
+const express = require("express");
+const helmet = require("helmet");
+const logger = require("morgan");
+const { connect_db } = require("../constants");
+const path = require("path");
+const { authRouter } = require("./routes/auth/users.routes");
+const cors = require("cors");
+const { Client } = require("pg");
+require("dotenv").config({ path: "../.env" });
+const passport = require("passport");
 const PORT = process.env.serverPort;
-
+const { findUserInDB } = require("../src/routes/auth/users.controllers");
 const app = express();
-
-app.use(logger('dev'));
+const client = new Client(db_config);
+app.use(cors());
+app.use(logger("dev"));
 app.use(helmet());
+app.use(passport.initialize());
 app.use(express.json());
-app.use(express.urlencoded({extended :true}));
+app.use(express.urlencoded({ extended: true }));
 
-console.log();
-connect_db();
+findUserInDB();
+// console.log();
+// connect_db();
 
-
-https.createServer(
+app.use("/auth", authRouter);
+app.get("/", (req: Request, res: Response) => {
+  res.send({ Yay: "you are authenticated" });
+});
+https
+  .createServer(
     {
-        key : fs.readFileSync(path.join(__dirname,'../certificates/key.pem')),
-        cert : fs.readFileSync(path.join(__dirname,'../certificates/cert.pem'))
-    },app).listen(PORT,()=>{
-        console.log(`Listening on port ${PORT}`)
-    })
+      key: fs.readFileSync(path.join(__dirname, "../certificates/key.pem")),
+      cert: fs.readFileSync(path.join(__dirname, "../certificates/cert.pem")),
+    },
+    app,
+  )
+  .listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`);
+  });
