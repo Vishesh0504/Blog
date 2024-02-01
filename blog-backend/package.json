@@ -19,20 +19,26 @@
     "passport-github2": "^0.1.12",
     "passport-google-oauth20": "^2.0.0",
     "passport-http-bearer": "^1.0.1",
-    "pg": "^8.11.3",
-    "prettier": "^3.2.4"
+    "pg": "^8.11.3"
   },
   "description": "",
   "license": "ISC",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/server.ts",
-    "format": "prettier '**/*.{cjs,mjs,ts,tsx,md,json}' --ignore-path ../.gitignore --ignore-unknown --no-error-on-unmatched-pattern --write"
+    "format": "prettier '**/*.{cjs,mjs,ts,tsx,md,json}' --ignore-path ../.gitignore --ignore-unknown --no-error-on-unmatched-pattern --write",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "husky": "^9.0.7",
+    "lint-staged": "^15.2.1",
     "nodemon": "^3.0.3",
+    "prettier": "^3.2.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
+  },
+  "lint-staged": {
+    "*.--write": "prettier --write"
   }
 }
