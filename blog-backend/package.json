@@ -9,17 +9,21 @@
     "@types/passport-github2": "^1.2.9",
     "@types/passport-google-oauth20": "^2.0.14",
     "@types/passport-oauth2": "^1.4.15",
+    "@types/redis": "^4.0.11",
     "cors": "^2.8.5",
     "dotenv": "^16.3.2",
     "express": "^4.18.2",
     "express-openid-connect": "^2.17.1",
     "helmet": "^7.1.0",
+    "ioredis": "^5.3.2",
     "morgan": "^1.10.0",
+    "otplib": "^12.0.1",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",
     "passport-google-oauth20": "^2.0.0",
     "passport-http-bearer": "^1.0.1",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "redis": "^4.6.12"
   },
   "description": "",
   "license": "ISC",
@@ -29,16 +33,23 @@
     "format": "prettier '**/*.{cjs,mjs,ts,tsx,md,json}' --ignore-path ../.gitignore --ignore-unknown --no-error-on-unmatched-pattern --write",
     "prepare": "husky install"
   },
-  "devDependencies": {
-    "@types/bun": "latest",
-    "husky": "^9.0.7",
-    "lint-staged": "^15.2.1",
-    "nodemon": "^3.0.3",
-    "prettier": "^3.2.4",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
-    "*.--write": "prettier --write"
+    "linters": {
+      "src/**/*.{tsx,ts,js,css}": ["prettier --write", "git add"]
+    },
+    "devDependencies": {
+      "@types/bun": "latest",
+      "husky": "^9.0.7",
+      "lint-staged": "^15.2.1",
+      "nodemon": "^3.0.3",
+      "prettier": "^3.2.4",
+      "ts-node": "^10.9.2",
+      "typescript": "^5.3.3"
+    }
   }
 }

@@ -7,13 +7,12 @@ const logger = require("morgan");
 const path = require("path");
 const { authRouter } = require("./routes/auth/users.routes");
 const cors = require("cors");
-
+import { connectRedis } from "./routes/auth/auth.config";
 require("dotenv").config({ path: "../.env" });
 
 const passport = require("passport");
 const PORT = process.env.serverPort;
 const app = express();
-
 
 app.use(cors());
 app.use(logger("dev"));
@@ -22,12 +21,13 @@ app.use(passport.initialize());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-
 app.use("/auth", authRouter);
 app.get("/", (req: Request, res: Response) => {
   res.send({ Yay: "you are authenticated" });
 });
+
+const client = connectRedis();
+console.log(client);
 https
   .createServer(
     {

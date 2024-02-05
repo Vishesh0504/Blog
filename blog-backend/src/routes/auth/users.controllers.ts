@@ -1,17 +1,15 @@
 import { db_config } from "../../../constants";
-import {  VerifyCallback } from "passport-oauth2";
+import { VerifyCallback } from "passport-oauth2";
 import { Profile as GoogleProfile } from "passport-google-oauth20";
 // import {Profile as GithubProfile} from "passport-github2"
 const { Client } = require("pg");
-
-
 
 async function verifyUser(
   accessToken: string,
   refreshToken: string | null,
   profile: GoogleProfile,
   done: VerifyCallback,
-  issuer:string,
+  issuer: string,
 ) {
   let user;
   const client = new Client(db_config);
@@ -41,28 +39,28 @@ async function verifyUser(
   } catch (err: any) {
     console.log(err);
     done(err);
-  }finally{
-    await client.end()
-    console.log("client has disconnected")
+  } finally {
+    await client.end();
+    console.log("client has disconnected");
   }
 }
 // For google authentication
 async function verifyUserGoogle(
-    accessToken: string,
-    refreshToken: string | null,
-    profile: GoogleProfile,
-    done: VerifyCallback,
-  ){
-    return verifyUser(accessToken,refreshToken,profile,done,"google")
-  }
+  accessToken: string,
+  refreshToken: string | null,
+  profile: GoogleProfile,
+  done: VerifyCallback,
+) {
+  return verifyUser(accessToken, refreshToken, profile, done, "google");
+}
 //for github auth
 async function verifyUserGithub(
-    accessToken: string,
-    refreshToken: string | null,
-    profile: GoogleProfile,
-    done: VerifyCallback,
-  ){
-    return verifyUser(accessToken,refreshToken,profile,done,"github")
-  }
+  accessToken: string,
+  refreshToken: string | null,
+  profile: GoogleProfile,
+  done: VerifyCallback,
+) {
+  return verifyUser(accessToken, refreshToken, profile, done, "github");
+}
 
-export { verifyUserGoogle,verifyUserGithub};
+export { verifyUserGoogle, verifyUserGithub };

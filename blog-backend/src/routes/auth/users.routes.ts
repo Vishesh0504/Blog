@@ -1,13 +1,13 @@
 import { Router } from "express";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import {Strategy as GithubStrategy} from "passport-github2"
-import { verifyUserGoogle, verifyUserGithub} from "./users.controllers";
-import { google_auth_options,github_auth_options} from "./auth.config";
+import { Strategy as GithubStrategy } from "passport-github2";
+import { verifyUserGoogle, verifyUserGithub } from "./users.controllers";
+import { google_auth_options, github_auth_options } from "./auth.config";
 const authRouter = Router();
 
 passport.use(new GoogleStrategy(google_auth_options, verifyUserGoogle));
-passport.use(new GithubStrategy(github_auth_options,verifyUserGithub))
+passport.use(new GithubStrategy(github_auth_options, verifyUserGithub));
 // For google auth
 
 authRouter.get(
@@ -26,8 +26,22 @@ authRouter.get(
   }),
 );
 
-authRouter.get("/login/github",passport.authenticate("github",{scope:['user:email']}));
-authRouter.get("/login/github/callback",passport.authenticate("github",{failureRedirect:'/login/github',failureMessage:true,successMessage:true,successReturnToOrRedirect:'/',session:false }));
+authRouter.get(
+  "/login/github",
+  passport.authenticate("github", { scope: ["user:email"] }),
+);
+
+
+authRouter.get(
+  "/login/github/callback",
+  passport.authenticate("github", {
+    failureRedirect: "/login/github",
+    failureMessage: true,
+    successMessage: true,
+    successReturnToOrRedirect: "/",
+    session: false,
+  }),
+);
 
 authRouter.post("/signup/local");
 authRouter.post("/login/local");
