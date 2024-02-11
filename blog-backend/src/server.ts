@@ -7,9 +7,7 @@ const logger = require("morgan");
 const path = require("path");
 const { authRouter } = require("./routes/auth/users.routes");
 const cors = require("cors");
-import { connectRedis } from "./routes/auth/auth.config";
 require("dotenv").config({ path: "../.env" });
-
 const passport = require("passport");
 const PORT = process.env.serverPort;
 const app = express();
@@ -26,8 +24,6 @@ app.get("/", (req: Request, res: Response) => {
   res.send({ Yay: "you are authenticated" });
 });
 
-const client = connectRedis();
-console.log(client);
 https
   .createServer(
     {

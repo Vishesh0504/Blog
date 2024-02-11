@@ -2,7 +2,12 @@ import { Router } from "express";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as GithubStrategy } from "passport-github2";
-import { verifyUserGoogle, verifyUserGithub } from "./users.controllers";
+import {
+  verifyUserGoogle,
+  verifyUserGithub,
+  generateOtp,
+  verifyOtp,
+} from "./users.controllers";
 import { google_auth_options, github_auth_options } from "./auth.config";
 const authRouter = Router();
 
@@ -31,7 +36,6 @@ authRouter.get(
   passport.authenticate("github", { scope: ["user:email"] }),
 );
 
-
 authRouter.get(
   "/login/github/callback",
   passport.authenticate("github", {
@@ -43,8 +47,8 @@ authRouter.get(
   }),
 );
 
-authRouter.post("/signup/local");
-authRouter.post("/login/local");
+authRouter.post("/local/generateOTP", generateOtp);
+authRouter.post("/local/verifyOTP", verifyOtp);
 
 module.exports = {
   authRouter,

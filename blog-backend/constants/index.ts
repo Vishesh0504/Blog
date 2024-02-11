@@ -32,4 +32,30 @@ function connect_db() {
   });
 }
 
-export { connect_db, db_config };
+function htmlContent(email: string, otp: string): string {
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Your Account on TheCodeConundrum.tech</title>
+</head>
+<body>
+  <h1>Verify Your Account on TheCodeConundrum.tech</h1>
+  <p>Hi ${email},</p>
+  <p>We've received a request to verify your account on TheCodeConundrum. Your one-time password (OTP) is:</p>
+  <h2 style="font-size: 24px; font-weight: bold;">${otp}</h2>
+  <p>Please enter this code in the verification field to complete your registration.</p>
+  <p>This code is valid for only 5 minutes. For security reasons, please do not share this code with anyone.</p>
+  <p>If you didn't request this verification, please ignore this email and contact us immediately at [Support Email Address].</p>
+  <br>
+  <p>Sincerely,</p>
+  <p>TheCodeConundrum Team</p>
+</body>
+</html>
+`;
+  return htmlContent;
+}
+
+export { connect_db, db_config, htmlContent };

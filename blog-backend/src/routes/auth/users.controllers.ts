@@ -1,9 +1,15 @@
-import { db_config } from "../../../constants";
+const postmark = require("postmark");
+const { Client } = require("pg");
+import { authenticator } from "otplib";
+import { Request, Response } from "express";
 import { VerifyCallback } from "passport-oauth2";
 import { Profile as GoogleProfile } from "passport-google-oauth20";
-// import {Profile as GithubProfile} from "passport-github2"
-const { Client } = require("pg");
-
+require("dotenv").config({ path: "../../../.env" });
+import { db_config, htmlContent } from "../../../constants";
+import { connectRedis } from "./auth.config";
+import * as argon2 from "argon2";
+const crypto = require("crypto");
+//verify function that goes into the google and github callback
 async function verifyUser(
   accessToken: string,
   refreshToken: string | null,
@@ -63,4 +69,69 @@ async function verifyUserGithub(
   return verifyUser(accessToken, refreshToken, profile, done, "github");
 }
 
-export { verifyUserGoogle, verifyUserGithub };
+async function hashingOTP(otp: string, salt: string) {
+  const otp_salt = otp + salt;
+  try {
+    return await argon2.hash(otp_salt, { type: argon2.argon2id });
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function generateOtp(req: Request, res: Response) {
+  const secret = authenticator.generateSecret();
+  const otp = authenticator.generate(secret);
+  var client = new postmark.ServerClient(process.env.postmark);
+  try {
+    var redisClient = await connectRedis();
+    const salt = await argon2.hash(crypto.randomBytes(32));
+    const hashedOTP = await hashingOTP(otp, salt);
+    console.log("OTP:", otp, "hashedOTP:", hashedOTP, "Salt:", salt);
+    await redisClient.set("${req.body.email}_hashedOTP", hashedOTP);
+    await redisClient.expire("${req.body.email}_hashedOTP", 300);
+    await redisClient.set("${req.body.email}_salt", salt);
+    await redisClient.expire("${req.body.email}_salt", 300);
+
+    await client.sendEmail({
+      From: "verifyuser@thecodeconundrum.tech",
+      To: req.body.email,
+      Subject: "OTP from TheCodeConundrum.tech",
+      HtmlBody: htmlContent(req.body.email, otp),
+      TextBody: "OTP verification from user!",
+      MessageStream: "otp-verification",
+    });
+    res.status(200).json({
+      OTP: "OTP sent successfully",
+    });
+  } catch (err) {
+    res.status(400).json({
+      error: err,
+    });
+  }
+}
+async function verifyOtp(req: Request, res: Response) {
+  var redisClient = await connectRedis();
+  try {
+    const hashedOTP = await redisClient.get("${req.body.email}_hashedOTP");
+    const salt = await redisClient.get("${req.body.email}_salt");
+    // console.log("V_salt:",salt);
+    if (hashedOTP) {
+      const combinedOtp = req.body.otp + salt;
+      // console.log("combinedOTP:",combinedOtp);
+      const isOtpValid = await argon2.verify(hashedOTP!, combinedOtp, {
+        type: argon2.argon2id,
+      });
+      if (isOtpValid) {
+        res.status(201).json({ message: "valid otp given by user" });
+      } else {
+        res.status(401).json({ message: "invalid otp provided" });
+      }
+    } else {
+      res.status(410).json({ message: "OTP expired " });
+    }
+  } catch (err) {
+    res.status(500).send(err);
+  }
+}
+
+export { verifyUserGoogle, verifyUserGithub, generateOtp, verifyOtp };
