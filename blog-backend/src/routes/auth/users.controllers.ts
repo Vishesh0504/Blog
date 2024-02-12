@@ -87,10 +87,10 @@ async function generateOtp(req: Request, res: Response) {
     const salt = await argon2.hash(crypto.randomBytes(32));
     const hashedOTP = await hashingOTP(otp, salt);
     console.log("OTP:", otp, "hashedOTP:", hashedOTP, "Salt:", salt);
-    await redisClient.set("${req.body.email}_hashedOTP", hashedOTP);
-    await redisClient.expire("${req.body.email}_hashedOTP", 300);
-    await redisClient.set("${req.body.email}_salt", salt);
-    await redisClient.expire("${req.body.email}_salt", 300);
+    await redisClient.set(`${req.body.email}_hashedOTP`, hashedOTP);
+    await redisClient.expire(`${req.body.email}_hashedOTP`, 300);
+    await redisClient.set(`${req.body.email}_salt`, salt);
+    await redisClient.expire(`${req.body.email}_salt`, 300);
 
     await client.sendEmail({
       From: "verifyuser@thecodeconundrum.tech",
