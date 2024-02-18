@@ -9,6 +9,8 @@ import {
   verifyOtp,
 } from "./users.controllers";
 import { google_auth_options, github_auth_options } from "./auth.config";
+import { error } from "console";
+import { URL_ORIGIN, cookieOptions } from "../../../constants";
 const authRouter = Router();
 
 passport.use(new GoogleStrategy(google_auth_options, verifyUserGoogle));
@@ -20,32 +22,66 @@ authRouter.get(
   passport.authenticate("google", { scope: ["profile", "email"] }),
 );
 
-authRouter.get(
-  "/login/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/login/google",
-    failureMessage: true,
-    successReturnToOrRedirect: "/",
-    successMessage: true,
-    session: false,
-  }),
-);
+authRouter.get("/login/google/callback", (req, res, next) => {
+  passport.authenticate(
+    "google",
+    {
+      failureRedirect: "/login/google",
+      failureMessage: true,
+      successReturnToOrRedirect: "/",
+      successMessage: true,
+      session: false,
+    },
+    (err: any, user: any) => {
+      if (err) {
+        console.log(err);
+        res.redirect("/auth/login/google");
+      } else if (user.jwt) {
+        console.log(user);
+        res.cookie("access_token", user.jwt, cookieOptions);
+        if (user.signup) {
+          res.redirect(URL_ORIGIN + "/userRole");
+        } else {
+          res.redirect(URL_ORIGIN + "/dashboard");
+        }
+      }
+      next();
+    },
+  )(req, res, next);
+});
 
 authRouter.get(
   "/login/github",
   passport.authenticate("github", { scope: ["user:email"] }),
 );
 
-authRouter.get(
-  "/login/github/callback",
-  passport.authenticate("github", {
-    failureRedirect: "/login/github",
-    failureMessage: true,
-    successMessage: true,
-    successReturnToOrRedirect: "/",
-    session: false,
-  }),
-);
+authRouter.get("/login/github/callback", (req, res, next) => {
+  passport.authenticate(
+    "github",
+    {
+      failureRedirect: "/login/github",
+      failureMessage: true,
+      successMessage: true,
+      successReturnToOrRedirect: "/",
+      session: false,
+    },
+    (err: any, user: any) => {
+      if (err) {
+        console.log(err);
+        res.redirect("/auth/login/google");
+      } else if (user.jwt) {
+        console.log(user);
+        res.cookie("access_token", user.jwt, cookieOptions);
+        if (user.signup) {
+          res.redirect(URL_ORIGIN + "/userRole");
+        } else {
+          res.redirect(URL_ORIGIN + "/dashboard");
+        }
+      }
+      next();
+    },
+  )(req, res, next);
+});
 
 authRouter.post("/local/generateOTP", generateOtp);
 authRouter.post("/local/verifyOTP", verifyOtp);

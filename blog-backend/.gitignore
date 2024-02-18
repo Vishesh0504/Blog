@@ -10,7 +10,7 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
-# Caches 
+# Caches
 
 .cache
 
@@ -55,7 +55,7 @@ bower_components
 build/Release
 
 # Dependency directories
-
+certificates/
 node_modules/
 jspm_packages/
 
