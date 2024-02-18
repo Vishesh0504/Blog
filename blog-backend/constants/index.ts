@@ -58,4 +58,13 @@ function htmlContent(email: string, otp: string): string {
   return htmlContent;
 }
 
-export { connect_db, db_config, htmlContent };
+const expirationDate = new Date();
+expirationDate.setDate(expirationDate.getDate() + 7);
+
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "prod",
+  expires: expirationDate,
+};
+const URL_ORIGIN = "http://localhost:/5173";
+export { connect_db, db_config, htmlContent, cookieOptions, URL_ORIGIN };
