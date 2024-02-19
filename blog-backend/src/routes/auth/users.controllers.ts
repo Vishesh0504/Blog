@@ -158,8 +158,9 @@ async function verifyOtp(req: Request, res: Response) {
   var redisClient = await connectRedis();
   const client = new Client(db_config);
   try {
-    const hashedOTP = await redisClient.get("${req.body.email}_hashedOTP");
-    const salt = await redisClient.get("${req.body.email}_salt");
+    const hashedOTP = await redisClient.get(`${req.body.email}_hashedOTP`);
+    const salt = await redisClient.get(`${req.body.email}_salt`);
+    console.log(hashedOTP);
     if (hashedOTP) {
       const combinedOtp = req.body.otp + salt;
       const isOtpValid = await argon2.verify(hashedOTP!, combinedOtp, {
@@ -186,7 +187,7 @@ async function verifyOtp(req: Request, res: Response) {
             .status(201)
             .cookie("access_token", token, cookieOptions)
             .json({ message: "otp correct user created" });
-          res.redirect(URL_ORIGIN + "/userRole");
+          return res.redirect(URL_ORIGIN + "/userRole");
         } else {
           let exisitingUser = {
             id: user.rows[0].id,
@@ -195,10 +196,10 @@ async function verifyOtp(req: Request, res: Response) {
           };
           let token = generateJWT(exisitingUser);
           res
-            .status(200)
+            .status(201)
             .cookie("access_token", token, cookieOptions)
             .json({ message: "OTP correct existing user found in the db" });
-          res.redirect(URL_ORIGIN + "/dashboard");
+          return res.redirect(URL_ORIGIN + "/dashboard");
         }
       } else {
         res.status(401).json({ message: "invalid otp provided" });

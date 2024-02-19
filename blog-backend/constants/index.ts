@@ -66,5 +66,5 @@ const cookieOptions = {
   secure: process.env.NODE_ENV === "prod",
   expires: expirationDate,
 };
-const URL_ORIGIN = "http://localhost:/5173";
+const URL_ORIGIN = "http://localhost:5173";
 export { connect_db, db_config, htmlContent, cookieOptions, URL_ORIGIN };
