@@ -14,11 +14,11 @@ const Navbar = () => {
     },
   };
 
-  const { theme, setTheme } = useContext(ThemeContext);
-  const bool = theme === "light";
+  const { setTheme,bool} = useContext(ThemeContext);
+
   return (
     <div
-      className={`flex gap-6 py-4 px-10 backdrop-blur-sm font-content items-center ${bool ? " text-text-light" : "text-text-dark"}`}
+      className={`flex gap-6 py-4 px-10 backdrop-blur-sm font-content items-center dark:text-text-dark text-text-light}`}
     >
       <div className={`font-[500] text-2xl flex-1 px-12 font-G`}>
         <Link className="font-heading flex gap-2 items-center" to="/">
@@ -28,7 +28,7 @@ const Navbar = () => {
       </div>
       <motion.div variants={variants} animate={bool ? "light" : "dark"} layout>
         <button
-          className={`size-5 p-3 box-content border-[1px]  rounded-full ${bool ? "border-gray-400" : "border-gray-700"}`}
+          className={`size-5 p-3 box-content border-[1px]  rounded-full  border-gray-400  dark:border-gray-700`}
           onClick={() => setTheme(`${bool ? "dark" : "light"}`)}
         >
           {bool ? (
@@ -39,11 +39,11 @@ const Navbar = () => {
         </button>
       </motion.div>
       <AnimatedButton to={"/login"}>
-        <ButtonBorder bool={bool}>Log In</ButtonBorder>
+        <ButtonBorder >Log In</ButtonBorder>
       </AnimatedButton>
 
       <AnimatedButton to={"/login"}>
-        <ButtonFill bool={bool}>Sign Up</ButtonFill>
+        <ButtonFill >Sign Up</ButtonFill>
       </AnimatedButton>
     </div>
   );
