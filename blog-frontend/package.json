@@ -13,14 +13,6 @@
   "dependencies": {
 
     "@formkit/auto-animate": "^0.8.1",
-    "@tanstack/react-router": "^1.16.6",
-    "@tanstack/router-devtools": "^1.16.6",
-    "@tanstack/router-vite-plugin": "^1.16.5",
-
-    "@tanstack/react-router": "^1.16.6",
-    "@tanstack/router-devtools": "^1.16.6",
-    "@tanstack/router-vite-plugin": "^1.16.5",
--
     "autoprefixer": "^10.4.17",
     "clsx": "^2.1.0",
     "framer-motion": "^11.0.6",
@@ -28,14 +20,9 @@
     "postcss": "^8.4.33",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-
-    "react-lottie": "^1.2.4",
     "simplex-noise": "^4.0.1",
     "tailwind-merge": "^2.2.1",
-
-
     "react-lottie": "^1.2.4",
-
     "tailwindcss": "^3.4.1"
   },
   "devDependencies": {
