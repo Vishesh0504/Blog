@@ -1,19 +1,28 @@
-import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+import { ThemeProvider, ThemeContext } from "../context/ThemeContext";
+import { useContext } from "react";
+import Navbar from "../components/Navbar";
 
-export const Route = createRootRoute({
-  component: () => (
-    <>
-      <div className="p-2 flex gap-2">
-        <Link to="/" className="[&.active]:font-bold">
-          Home
-        </Link>{' '}
-        <Link to="/about" className="[&.active]:font-bold">
-          About
-        </Link>
-      </div>
+const RootComponent = () => {
+  const { theme } = useContext(ThemeContext);
+  return (
+    <div
+      className={`${theme === "light" ? "bg-bg-light" : "bg-bg-dark"} min-h-screen  `}
+    >
+      <Navbar />
+      <hr
+        className={`border-1 ${theme === "light" ? "border-gray-300" : "border-gray-700"}`}
+      ></hr>
       <Outlet />
       <TanStackRouterDevtools />
-    </>
+    </div>
+  );
+};
+export const Route = createRootRoute({
+  component: () => (
+    <ThemeProvider>
+      <RootComponent />
+    </ThemeProvider>
   ),
-})
+});
