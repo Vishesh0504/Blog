@@ -12,8 +12,8 @@ export const Route = createLazyFileRoute("/")({
 });
 
 function Index() {
-  const { theme } = useContext(ThemeContext);
-  const bool = theme === "light";
+  const { theme,bool} = useContext(ThemeContext);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 100 }}
@@ -23,9 +23,9 @@ function Index() {
         duration: 1.3,
         ease: "easeInOut",
       }}
-      className={`flex flex-col text-center items-center gap-6 p-24 px-96 text-${bool ? "text-light" : "text-dark"}`}
+      className={`flex flex-col text-center items-center gap-6 p-24 px-96 max-xl:px-64 max-lg:px-48 dark:text-text-dark text-text-light`}
     >
-      <div className="flex flex-col text-[4em] font-heading">
+      <div className="flex flex-col text-[4em] font-heading max-xl:text-4xl max-lg:text-2xl ">
         <p>
           Make your{" "}
           <span
@@ -43,19 +43,19 @@ function Index() {
           </span>
         </p>
       </div>
-      <div className="text-center my-6 font-content text-2xl w-[22rem] leading-7">
+      <div className="text-center my-6 font-content text-2xl max-xl:text-xl max-lg:text-base w-[22rem] leading-7">
         Escape the platform prison customize without limits and own your online
         presence
       </div>
-      <div className="flex gap-6">
+      <div className="flex gap-6 max-xl:text-xl max-lg:text-base">
         <AnimatedButton>
-          <ButtonBorder bool={bool}>
+          <ButtonBorder >
             <img src={`/assets/discover-${theme}.png`} className="size-5" />
             <p>Discover</p>
           </ButtonBorder>
         </AnimatedButton>
-        <AnimatedButton>
-          <ButtonFill bool={bool}>
+        <AnimatedButton to={'/login'}>
+          <ButtonFill >
             <img src={`/assets/edit-${theme}.png`} className="size-5" />
             <p>Write</p>
           </ButtonFill>

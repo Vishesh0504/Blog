@@ -4,7 +4,6 @@ import { Link } from "@tanstack/react-router";
 interface props {
   children: ReactNode;
   to?: string;
-  bool?: boolean;
 }
 
 const AnimatedButton = ({ children, to }: props) => {
@@ -17,20 +16,20 @@ const AnimatedButton = ({ children, to }: props) => {
   );
 };
 
-export const ButtonFill = ({ children, bool }: props) => {
+export const ButtonFill = ({ children}: props) => {
   return (
     <button
-      className={`rounded-lg px-4 py-2 flex gap-2 items-center justify-center ${bool ? "bg-secondary-light" : "bg-secondary-dark"}`}
+      className={`rounded-lg px-4 py-2 flex gap-2 items-center justify-center bg-secondary-light dark:bg-secondary-dark}`}
     >
       {children}
     </button>
   );
 };
 
-export const ButtonBorder = ({ children, bool }: props) => {
+export const ButtonBorder = ({ children }: props) => {
   return (
     <button
-      className={`rounded-lg px-4 py-2 border-2 flex gap-2 items-center justify-center ${bool ? "border-secondary-light" : "border-secondary-dark"}`}
+      className={`rounded-lg px-4 py-2 border-2 flex gap-2 items-center justify-center border-secondary-light dark:border-secondary-dark }`}
     >
       {children}
     </button>
