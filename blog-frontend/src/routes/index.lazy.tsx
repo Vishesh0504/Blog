@@ -1,4 +1,3 @@
-
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
@@ -12,7 +11,7 @@ export const Route = createLazyFileRoute("/")({
 });
 
 function Index() {
-  const { theme,bool} = useContext(ThemeContext);
+  const { theme, bool } = useContext(ThemeContext);
 
   return (
     <motion.div
@@ -49,13 +48,13 @@ function Index() {
       </div>
       <div className="flex gap-6 max-xl:text-xl max-lg:text-base">
         <AnimatedButton>
-          <ButtonBorder >
+          <ButtonBorder>
             <img src={`/assets/discover-${theme}.png`} className="size-5" />
             <p>Discover</p>
           </ButtonBorder>
         </AnimatedButton>
-        <AnimatedButton to={'/login'}>
-          <ButtonFill >
+        <AnimatedButton to={"/login"}>
+          <ButtonFill>
             <img src={`/assets/edit-${theme}.png`} className="size-5" />
             <p>Write</p>
           </ButtonFill>
