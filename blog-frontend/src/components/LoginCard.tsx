@@ -4,7 +4,7 @@ import AnimatedButton from "./AnimatedButton";
 const LoginCard = () => {
   const { theme } = useContext(ThemeContext);
   return (
-    <div className="flex flex-col box-content gap-4 rounded-md py-10 px-14 border-[1px] border-gray-300 dark:border-gray-700 shadow-login backdrop-blur-md justify-center items-center ">
+    <div className="flex flex-col box-content gap-4 rounded-md py-10 px-14 border-[1px] border-gray-300 dark:border-gray-700 transition ease-in-out duration-300 hover:shadow-login backdrop-blur-md justify-center items-center ">
       <div className="font-heading text-2xl mb-2">Log In or Sign Up</div>
       <div className="flex flex-col gap-4 max-lg:flex-row">
         <AnimatedButton>
