@@ -1,15 +1,16 @@
 /** @type {import('tailwindcss').Config} */
 
 export default {
-  darkMode:'class',
+  darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-      boxShadow:{
-        login:'rgba(170, 3, 226, 0.05) 0px 54px 55px, rgba(170, 3, 226, 0.1) 0px -12px 30px, rgba(196, 29, 252,0.1) 0px 4px 6px, rgba(196, 29, 252, 0.1) 0px 12px 13px, rgba(196, 29, 252, 0.09) 0px -3px 5px;'
+      boxShadow: {
+        login:
+          "rgba(170, 3, 226, 0.05) 0px 54px 55px, rgba(170, 3, 226, 0.1) 0px -12px 30px, rgba(196, 29, 252,0.1) 0px 4px 6px, rgba(196, 29, 252, 0.1) 0px 12px 13px, rgba(196, 29, 252, 0.09) 0px -3px 5px;",
       },
-      border:{
-        1:'1px'
+      border: {
+        1: "1px",
       },
       colors: {
         primary: {

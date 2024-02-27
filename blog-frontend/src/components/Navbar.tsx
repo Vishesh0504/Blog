@@ -14,7 +14,7 @@ const Navbar = () => {
     },
   };
 
-  const { setTheme,bool} = useContext(ThemeContext);
+  const { setTheme, bool } = useContext(ThemeContext);
 
   return (
     <div
@@ -39,11 +39,11 @@ const Navbar = () => {
         </button>
       </motion.div>
       <AnimatedButton to={"/login"}>
-        <ButtonBorder >Log In</ButtonBorder>
+        <ButtonBorder>Log In</ButtonBorder>
       </AnimatedButton>
 
       <AnimatedButton to={"/login"}>
-        <ButtonFill >Sign Up</ButtonFill>
+        <ButtonFill>Sign Up</ButtonFill>
       </AnimatedButton>
     </div>
   );
