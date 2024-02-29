@@ -52,17 +52,17 @@ async function verifyUser(
     await client.connect();
     // console.log(profile)
     user = await client.query(
-      "SELECT * FROM user_credentials WHERE issuer = $1 and username = $2",
-      [issuer, profile.displayName],
+      "SELECT * FROM user_credentials WHERE issuer = $1 and email = $2",
+      [issuer, profile._json.email],
     );
     // console.log(user);
     if (user.rows.length === 0) {
       const id = await client.query(
-        "INSERT INTO user_credentials(username,email,issuer) values($1,$2,$3) RETURNING id",
-        [profile.displayName, profile._json.email, issuer],
+        "INSERT INTO user_credentials(username,email,issuer) values($2,$3) RETURNING id",
+        [profile._json.email, issuer],
       );
       const createdUser = {
-        id: id.rows.id,
+        id: id.rows[0].id,
         name: profile.displayName,
         email: profile._json.email!,
       };
@@ -71,6 +71,7 @@ async function verifyUser(
       return done(null, {
         jwt: token,
         signup: true,
+        user: createdUser,
       });
     } else {
       console.log("hello");
@@ -83,6 +84,7 @@ async function verifyUser(
       return done(null, {
         jwt: token,
         signup: false,
+        user:exisitingUser,
       });
     }
   } catch (err: any) {
@@ -130,7 +132,7 @@ async function generateOtp(req: Request, res: Response) {
     var redisClient = await connectRedis();
     const salt = await argon2.hash(crypto.randomBytes(32));
     const hashedOTP = await hashingOTP(otp, salt);
-    console.log("OTP:", otp, "hashedOTP:", hashedOTP, "Salt:", salt);
+    // console.log("OTP:", otp, "hashedOTP:", hashedOTP, "Salt:", salt);
     await redisClient.set(`${req.body.email}_hashedOTP`, hashedOTP);
     await redisClient.expire(`${req.body.email}_hashedOTP`, 300);
     await redisClient.set(`${req.body.email}_salt`, salt);
@@ -180,6 +182,7 @@ async function verifyOtp(req: Request, res: Response) {
           );
           let createdUser = {
             id: id.rows[0].id,
+            name: req.body.displayName,
             email: req.body.email,
           };
           let token = generateJWT(createdUser);
