@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { NextFunction, Router } from "express";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as GithubStrategy } from "passport-github2";
@@ -26,23 +26,19 @@ authRouter.get("/login/google/callback", (req, res, next) => {
   passport.authenticate(
     "google",
     {
-      failureRedirect: "/login/google",
-      failureMessage: true,
-      successReturnToOrRedirect: "/",
-      successMessage: true,
       session: false,
     },
     (err: any, user: any) => {
       if (err) {
         console.log(err);
-        res.redirect("/auth/login/google");
+        res.redirect(URL_ORIGIN+"/login");
       } else if (user.jwt) {
-        console.log(user);
-        res.cookie("access_token", user.jwt, cookieOptions);
+        res.cookie("access_token", user.jwt, cookieOptions)
         if (user.signup) {
-          res.redirect(URL_ORIGIN + "/userRole");
+          return res.redirect(URL_ORIGIN + "/userRole");
         } else {
-          res.redirect(URL_ORIGIN + "/dashboard");
+          res.cookie('user', JSON.stringify(user.user),{secure:false,sameSite:true});
+          return res.redirect(URL_ORIGIN + "/dashboard");
         }
       }
       next();
@@ -50,6 +46,8 @@ authRouter.get("/login/google/callback", (req, res, next) => {
   )(req, res, next);
 });
 
+
+//For github oauth
 authRouter.get(
   "/login/github",
   passport.authenticate("github", { scope: ["user:email"] }),
@@ -59,23 +57,21 @@ authRouter.get("/login/github/callback", (req, res, next) => {
   passport.authenticate(
     "github",
     {
-      failureRedirect: "/login/github",
-      failureMessage: true,
-      successMessage: true,
-      successReturnToOrRedirect: "/",
       session: false,
     },
     (err: any, user: any) => {
       if (err) {
         console.log(err);
-        res.redirect("/auth/login/google");
+        res.status(500).json({"message":"Login/Signup failed please try again"})
+        return res.redirect(URL_ORIGIN+"/login");
       } else if (user.jwt) {
-        console.log(user);
-        res.cookie("access_token", user.jwt, cookieOptions);
+        res.
+        cookie("access_token", user.jwt, cookieOptions).
+        cookie('user',user.user,{secure:false,sameSite:true});
         if (user.signup) {
-          res.redirect(URL_ORIGIN + "/userRole");
+          res.redirect(URL_ORIGIN + "/onboarding");
         } else {
-          res.redirect(URL_ORIGIN + "/dashboard");
+          res.redirect(URL_ORIGIN + "/dasboard");
         }
       }
       next();

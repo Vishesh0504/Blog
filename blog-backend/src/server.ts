@@ -35,7 +35,7 @@ const verifyAuthentication = (
   let token = req.cookies.access_token;
   if (!token) {
     res.status(403).json({ message: "user is not authorized" });
-    return res.redirect(URL_ORIGIN + "/auth");
+    return res.redirect(URL_ORIGIN + "/login");
   } else {
     const privateKey = fs.readFileSync(
       path.join(__dirname, "../certificates/server.key"),
