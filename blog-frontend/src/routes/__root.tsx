@@ -1,11 +1,12 @@
 import {
-  createRootRoute,
+  createRootRouteWithContext,
   Outlet,
   useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { ThemeProvider, ThemeContext } from "../context/ThemeContext";
 import { useContext } from "react";
+import {QueryClient} from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Loading from "../components/Loading";
@@ -34,7 +35,9 @@ const RootComponent = () => {
     </div>
   );
 };
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+  queryClient:QueryClient
+}>()({
   component: () => (
     <ThemeProvider>
       <RootComponent />
