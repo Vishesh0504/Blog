@@ -162,6 +162,7 @@ async function verifyOtp(req: Request, res: Response) {
   try {
     const hashedOTP = await redisClient.get(`${req.body.email}_hashedOTP`);
     const salt = await redisClient.get(`${req.body.email}_salt`);
+    console.log(req.body)
     console.log(hashedOTP);
     if (hashedOTP) {
       const combinedOtp = req.body.otp + salt;
@@ -211,7 +212,7 @@ async function verifyOtp(req: Request, res: Response) {
       res.status(410).json({ message: "OTP expired " });
     }
   } catch (err) {
-    res.status(500).send(err);
+    return res.status(500).send(err);
   } finally {
     await client.end();
     console.log("client has disconnected");
