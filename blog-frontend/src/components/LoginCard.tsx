@@ -36,7 +36,7 @@ const LoginCard = () => {
   else if(mutation.isSuccess)
   {
     toast.success(`${mutation.data.data.OTP}`)
-    setTimeout(()=>{navigate({to:'/'})},1000)
+    setTimeout(()=>{navigate({to:'/login/enterOTP'})},1000)
 
   }
     return () =>toast.dismiss();
@@ -74,7 +74,8 @@ const LoginCard = () => {
       initialValues={{email:''}}
       validationSchema={validationSchema}
       onSubmit={(values)=>{
-        console.log(values);
+        // console.log(values);
+        localStorage.setItem('email',values.email)
         mutation.mutate(values)}}
       >
       {({errors,touched}:FormikProps<EmailProps> ) =>(

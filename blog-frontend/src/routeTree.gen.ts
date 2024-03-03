@@ -16,6 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
 import { Route as OnboardingIndexImport } from './routes/onboarding.index'
 import { Route as LoginIndexImport } from './routes/login.index'
+import { Route as LoginEnterOTPImport } from './routes/login.enterOTP'
 
 // Create Virtual Routes
 
@@ -43,6 +44,11 @@ const LoginIndexRoute = LoginIndexImport.update({
   getParentRoute: () => LoginRoute,
 } as any)
 
+const LoginEnterOTPRoute = LoginEnterOTPImport.update({
+  path: '/enterOTP',
+  getParentRoute: () => LoginRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -54,6 +60,10 @@ declare module '@tanstack/react-router' {
     '/login': {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
+    }
+    '/login/enterOTP': {
+      preLoaderRoute: typeof LoginEnterOTPImport
+      parentRoute: typeof LoginImport
     }
     '/login/': {
       preLoaderRoute: typeof LoginIndexImport
@@ -70,7 +80,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
-  LoginRoute.addChildren([LoginIndexRoute]),
+  LoginRoute.addChildren([LoginEnterOTPRoute, LoginIndexRoute]),
   OnboardingIndexRoute,
 ])
 

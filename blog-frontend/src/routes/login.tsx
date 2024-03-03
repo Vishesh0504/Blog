@@ -14,11 +14,8 @@ function Login() {
       <div className="w-1/2 max-sm:hidden">
         <Suspense >
         <LoadingAnimation/>
-
         </Suspense>
       </div>
-
-
       <Outlet/>
     </div>
   );
