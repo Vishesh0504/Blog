@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import "./index.css";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { QueryClientProvider,QueryClient} from "@tanstack/react-query";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 // Import the generated route tree
@@ -23,11 +23,10 @@ const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
-    <StrictMode>
+    // <StrictMode>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
       </QueryClientProvider>
-
-    </StrictMode>,
+    // </StrictMode>,
   );
 }

@@ -7,9 +7,9 @@ import {
   verifyUserGithub,
   generateOtp,
   verifyOtp,
+  fetchTTL
 } from "./users.controllers";
 import { google_auth_options, github_auth_options } from "./auth.config";
-import { error } from "console";
 import { URL_ORIGIN, cookieOptions } from "../../../constants";
 const authRouter = Router();
 
@@ -81,6 +81,8 @@ authRouter.get("/login/github/callback", (req, res, next) => {
 
 authRouter.post("/local/generateOTP", generateOtp);
 authRouter.post("/local/verifyOTP", verifyOtp);
+
+authRouter.post("/fetchTTL",fetchTTL);
 
 module.exports = {
   authRouter,

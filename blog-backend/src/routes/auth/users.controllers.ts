@@ -128,8 +128,8 @@ async function generateOtp(req: Request, res: Response) {
   const secret = authenticator.generateSecret();
   const otp = authenticator.generate(secret);
   var client = new postmark.ServerClient(process.env.postmark);
+  var redisClient = await connectRedis();
   try {
-    var redisClient = await connectRedis();
     const salt = await argon2.hash(crypto.randomBytes(32));
     const hashedOTP = await hashingOTP(otp, salt);
     // console.log("OTP:", otp, "hashedOTP:", hashedOTP, "Salt:", salt);
@@ -153,6 +153,9 @@ async function generateOtp(req: Request, res: Response) {
     res.status(400).json({
       error: err,
     });
+  }finally{
+    await redisClient.quit()
+    console.log("redis client disconnected")
   }
 }
 
@@ -212,11 +215,34 @@ async function verifyOtp(req: Request, res: Response) {
       res.status(410).json({ message: "OTP expired " });
     }
   } catch (err) {
-    return res.status(500).send(err);
+    return res.status(500).json(err);
   } finally {
     await client.end();
+    await redisClient.quit();
     console.log("client has disconnected");
   }
 }
 
-export { verifyUserGoogle, verifyUserGithub, generateOtp, verifyOtp };
+async function fetchTTL(req:Request,res:Response) {
+  var redisClient = await connectRedis();
+  try{
+
+    const email = req.body.email;
+    const ttl = await redisClient.ttl(`${email}_salt`);
+    console.log(ttl)
+    if(ttl===-2 || ttl ===-1)
+    {
+      throw Error;
+    }
+    res.status(200).json({ttl:ttl})
+  }catch(err)
+  {
+    // console.log(err);
+    res.status(500);
+  }finally{
+    await redisClient.quit()
+    console.log("redis client disconnected");
+  }
+}
+
+export { verifyUserGoogle, verifyUserGithub, generateOtp, verifyOtp,fetchTTL};
