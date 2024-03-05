@@ -34,7 +34,7 @@ const LoginCard = () => {
     } else if (mutation.isError) {
       toast.error(`${mutation.error.message}`);
     } else if (mutation.isSuccess) {
-      toast.success(`${mutation.data.data.OTP}`);
+      toast.success(`${mutation.data.data.message}`);
       setTimeout(() => {
         navigate({ to: "/login/enterOTP" });
       }, 1000);
@@ -55,7 +55,7 @@ const LoginCard = () => {
           <p className="max-lg:hidden">Continue with Google</p>
         </button>
         <button
-          onClick={() => handleClickOauth("google")}
+          onClick={() => handleClickOauth("github")}
           className="flex gap-2 border-[1px] dark:border-gray-600 border-gray-300 px-12 py-4 rounded-full max-lg:px-8"
         >
           <img src={`/assets/github-${theme}.png`} className="size-6" />
@@ -63,7 +63,7 @@ const LoginCard = () => {
         </button>
       </div>
 
-      <div className="flex justify-center items-center gap-2 dark:text-gray-400 text-gray-500 ">
+      <div className="flex-1 flex justify-center items-center gap-2 dark:text-gray-400 text-gray-500 ">
         <hr className="w-28 dark:border-gray-600 border-gray-300"></hr>
         or
         <hr className="w-28 dark:border-gray-600 border-gray-300"></hr>
@@ -79,12 +79,12 @@ const LoginCard = () => {
         }}
       >
         {({ errors, touched }: FormikProps<EmailProps>) => (
-          <Form className="flex flex-col gap-3">
+          <Form className="flex-1 flex flex-col gap-3">
             <div>
               <Field
                 name="email"
                 placeholder="Enter your Email"
-                className={`outline-none border-[1px]  rounded-lg px-5 py-3 bg-transparent caret-accent-light ${errors.email ? "border-red-400" : "dark:border-gray-600 border-gray-300"}`}
+                className={`w-content outline-none border-[1px] rounded-lg px-5 py-3 bg-transparent caret-accent-light ${errors.email ? "border-red-400" : "dark:border-gray-600 border-gray-300"}`}
               />
               <div className="text-red-400 text-sm ml-6 mt-2">
                 {errors.email && touched.email ? (
@@ -94,7 +94,7 @@ const LoginCard = () => {
             </div>
             <button
               type="submit"
-              className="rounded-lg px-20 py-3 dark:bg-accent-dark bg-accent-light text-lg bg-opacity-65 transition hover:scale-105"
+              className="flex-1 rounded-lg px-20 py-3 dark:bg-accent-dark bg-accent-light text-lg bg-opacity-65 transition hover:scale-105"
             >
               Send OTP
             </button>

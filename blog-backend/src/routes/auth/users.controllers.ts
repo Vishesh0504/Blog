@@ -29,7 +29,6 @@ interface user {
 }
 //generate JWT token on successful sign in
 async function generateJWT(user: user) {
-  let secret = process.env.jwtSecret;
   try {
     let token = await jwt.sign(user, privateKey, { algorithm: "RS256" });
     return token;
@@ -58,8 +57,8 @@ async function verifyUser(
     // console.log(user);
     if (user.rows.length === 0) {
       const id = await client.query(
-        "INSERT INTO user_credentials(username,email,issuer) values($2,$3) RETURNING id",
-        [profile._json.email, issuer],
+        "INSERT INTO user_credentials(username,email,issuer) values($1,$2,$3 ) RETURNING id",
+        [profile.displayName, profile._json.email, issuer],
       );
       const createdUser = {
         id: id.rows[0].id,
@@ -84,7 +83,7 @@ async function verifyUser(
       return done(null, {
         jwt: token,
         signup: false,
-        user:exisitingUser,
+        user: exisitingUser,
       });
     }
   } catch (err: any) {
@@ -147,15 +146,15 @@ async function generateOtp(req: Request, res: Response) {
       MessageStream: "otp-verification",
     });
     res.status(200).json({
-      OTP: "OTP sent successfully",
+      message: "OTP sent successfully",
     });
   } catch (err) {
     res.status(400).json({
       error: err,
     });
-  }finally{
-    await redisClient.quit()
-    console.log("redis client disconnected")
+  } finally {
+    await redisClient.quit();
+    console.log("redis client disconnected");
   }
 }
 
@@ -165,8 +164,9 @@ async function verifyOtp(req: Request, res: Response) {
   try {
     const hashedOTP = await redisClient.get(`${req.body.email}_hashedOTP`);
     const salt = await redisClient.get(`${req.body.email}_salt`);
-    console.log(req.body)
-    console.log(hashedOTP);
+    // console.log(req.body)
+    // console.log(hashedOTP);
+
     if (hashedOTP) {
       const combinedOtp = req.body.otp + salt;
       const isOtpValid = await argon2.verify(hashedOTP!, combinedOtp, {
@@ -193,8 +193,10 @@ async function verifyOtp(req: Request, res: Response) {
           res
             .status(201)
             .cookie("access_token", token, cookieOptions)
-            .json({ message: "otp correct user created" });
-          return res.redirect(URL_ORIGIN + "/userRole");
+            .json({
+              message: "OTP verified,user created",
+              redirectUrl: `/onboarding`,
+            });
         } else {
           let exisitingUser = {
             id: user.rows[0].id,
@@ -205,8 +207,10 @@ async function verifyOtp(req: Request, res: Response) {
           res
             .status(201)
             .cookie("access_token", token, cookieOptions)
-            .json({ message: "OTP correct existing user found in the db" });
-          return res.redirect(URL_ORIGIN + "/dashboard");
+            .json({
+              message: "OTP verified,existing user found",
+              redirectUrl: `/dashboard`,
+            });
         }
       } else {
         res.status(401).json({ message: "invalid otp provided" });
@@ -215,7 +219,7 @@ async function verifyOtp(req: Request, res: Response) {
       res.status(410).json({ message: "OTP expired " });
     }
   } catch (err) {
-    return res.status(500).json(err);
+    res.status(500).json(err);
   } finally {
     await client.end();
     await redisClient.quit();
@@ -223,26 +227,23 @@ async function verifyOtp(req: Request, res: Response) {
   }
 }
 
-async function fetchTTL(req:Request,res:Response) {
+async function fetchTTL(req: Request, res: Response) {
   var redisClient = await connectRedis();
-  try{
-
+  try {
     const email = req.body.email;
     const ttl = await redisClient.ttl(`${email}_salt`);
-    console.log(ttl)
-    if(ttl===-2 || ttl ===-1)
-    {
+    console.log(ttl);
+    if (ttl === -2 || ttl === -1) {
       throw Error;
     }
-    res.status(200).json({ttl:ttl})
-  }catch(err)
-  {
+    res.status(200).json({ ttl: ttl });
+  } catch (err) {
     // console.log(err);
     res.status(500);
-  }finally{
-    await redisClient.quit()
+  } finally {
+    await redisClient.quit();
     console.log("redis client disconnected");
   }
 }
 
-export { verifyUserGoogle, verifyUserGithub, generateOtp, verifyOtp,fetchTTL};
+export { verifyUserGoogle, verifyUserGithub, generateOtp, verifyOtp, fetchTTL };

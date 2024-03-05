@@ -7,7 +7,7 @@ import {
   verifyUserGithub,
   generateOtp,
   verifyOtp,
-  fetchTTL
+  fetchTTL,
 } from "./users.controllers";
 import { google_auth_options, github_auth_options } from "./auth.config";
 import { URL_ORIGIN, cookieOptions } from "../../../constants";
@@ -31,13 +31,16 @@ authRouter.get("/login/google/callback", (req, res, next) => {
     (err: any, user: any) => {
       if (err) {
         console.log(err);
-        res.redirect(URL_ORIGIN+"/login");
+        res.redirect(URL_ORIGIN + "/login");
       } else if (user.jwt) {
-        res.cookie("access_token", user.jwt, cookieOptions)
+        res.cookie("access_token", user.jwt, cookieOptions);
+        res.cookie("user", JSON.stringify(user.user), {
+          secure: false,
+          sameSite: true,
+        });
         if (user.signup) {
-          return res.redirect(URL_ORIGIN + "/userRole");
+          return res.redirect(URL_ORIGIN + "/onboarding");
         } else {
-          res.cookie('user', JSON.stringify(user.user),{secure:false,sameSite:true});
           return res.redirect(URL_ORIGIN + "/dashboard");
         }
       }
@@ -45,7 +48,6 @@ authRouter.get("/login/google/callback", (req, res, next) => {
     },
   )(req, res, next);
 });
-
 
 //For github oauth
 authRouter.get(
@@ -62,12 +64,14 @@ authRouter.get("/login/github/callback", (req, res, next) => {
     (err: any, user: any) => {
       if (err) {
         console.log(err);
-        res.status(500).json({"message":"Login/Signup failed please try again"})
-        return res.redirect(URL_ORIGIN+"/login");
+        res
+          .status(500)
+          .json({ message: "Login/Signup failed please try again" });
+        return res.redirect(URL_ORIGIN + "/login");
       } else if (user.jwt) {
-        res.
-        cookie("access_token", user.jwt, cookieOptions).
-        cookie('user',user.user,{secure:false,sameSite:true});
+        res
+          .cookie("access_token", user.jwt, cookieOptions)
+          .cookie("user", user.user, { secure: false, sameSite: true });
         if (user.signup) {
           res.redirect(URL_ORIGIN + "/onboarding");
         } else {
@@ -82,7 +86,7 @@ authRouter.get("/login/github/callback", (req, res, next) => {
 authRouter.post("/local/generateOTP", generateOtp);
 authRouter.post("/local/verifyOTP", verifyOtp);
 
-authRouter.post("/fetchTTL",fetchTTL);
+authRouter.post("/fetchTTL", fetchTTL);
 
 module.exports = {
   authRouter,
