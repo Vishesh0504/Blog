@@ -10,6 +10,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Loading from "../components/Loading";
+import { AuthProvider, User } from "../context/AuthContext";
 
 const LoadingSpinner = () => {
   const isLoading = useRouterState({ select: (s) => s.status === "pending" });
@@ -37,10 +38,14 @@ const RootComponent = () => {
 };
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
+  isAuthenticated: boolean;
+  user: User | undefined;
 }>()({
   component: () => (
-    <ThemeProvider>
-      <RootComponent />
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <RootComponent />
+      </ThemeProvider>
+    </AuthProvider>
   ),
 });
