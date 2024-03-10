@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { ReactNode, useContext, useEffect } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -84,7 +84,7 @@ const LoginCard = () => {
               <Field
                 name="email"
                 placeholder="Enter your Email"
-                className={`w-content outline-none border-[1px] rounded-lg px-5 py-3 bg-transparent caret-accent-light ${errors.email ? "border-red-400" : "dark:border-gray-600 border-gray-300"}`}
+                className={` w-fit outline-none border-[1px] rounded-lg px-5 py-3 bg-transparent caret-accent-light ${errors.email ? "border-red-400" : "dark:border-gray-600 border-gray-300"}`}
               />
               <div className="text-red-400 text-sm ml-6 mt-2">
                 {errors.email && touched.email ? (
@@ -106,3 +106,11 @@ const LoginCard = () => {
 };
 
 export default LoginCard;
+
+export const Card = ({ children }: { children: ReactNode }) => {
+  return (
+    <div className="flex flex-col box-content gap-4 rounded-md py-10 px-14 border-[1px] border-gray-300 dark:border-gray-700 transition ease-in-out duration-300 hover:shadow-login backdrop-blur-md justify-center items-center">
+      {children}
+    </div>
+  );
+};

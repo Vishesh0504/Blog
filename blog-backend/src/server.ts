@@ -1,5 +1,3 @@
-import { NextFunction, Request, Response } from "express";
-import { URL_ORIGIN } from "../constants";
 const fs = require("fs");
 const path = require("path");
 const https = require("https");
@@ -8,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const cookie_parser = require("cookie-parser");
 const helmet = require("helmet");
 const logger = require("morgan");
-
+import { verifyAuthentication } from "./routes/protected";
 const { authRouter } = require("./routes/auth/users.routes");
 const cors = require("cors");
 require("dotenv").config({ path: "../.env" });
@@ -26,26 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/auth", authRouter);
 
-const verifyAuthentication = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  console.log(req.cookies);
-  let token = req.cookies.access_token;
-  if (!token) {
-    res.status(403).json({ message: "user is not authorized" });
-    return res.redirect(URL_ORIGIN + "/login");
-  } else {
-    const privateKey = fs.readFileSync(
-      path.join(__dirname, "../certificates/server.key"),
-    );
-    let decodedUser = jwt.verify(token, privateKey, { algorithm: "HS256" });
-    req.user = decodedUser;
-  }
-  next();
-};
-
+app.get('/',verifyAuthentication,()=>{console.log("hi")})
 https
   .createServer(
     {

@@ -1,4 +1,5 @@
-import { NextFunction, Router } from "express";
+import {  Router } from "express";
+import { verifyAuthentication } from "../protected";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as GithubStrategy } from "passport-github2";
@@ -8,10 +9,12 @@ import {
   generateOtp,
   verifyOtp,
   fetchTTL,
+  updateProfile,
 } from "./users.controllers";
 import { google_auth_options, github_auth_options } from "./auth.config";
 import { URL_ORIGIN, cookieOptions } from "../../../constants";
 const authRouter = Router();
+const multer = require('multer');
 
 passport.use(new GoogleStrategy(google_auth_options, verifyUserGoogle));
 passport.use(new GithubStrategy(github_auth_options, verifyUserGithub));
@@ -71,7 +74,7 @@ authRouter.get("/login/github/callback", (req, res, next) => {
       } else if (user.jwt) {
         res
           .cookie("access_token", user.jwt, cookieOptions)
-          .cookie("user", user.user, { secure: false, sameSite: true });
+          .cookie("user", JSON.stringify(user.user), { secure: false, sameSite: true });
         if (user.signup) {
           res.redirect(URL_ORIGIN + "/onboarding");
         } else {
@@ -87,6 +90,8 @@ authRouter.post("/local/generateOTP", generateOtp);
 authRouter.post("/local/verifyOTP", verifyOtp);
 
 authRouter.post("/fetchTTL", fetchTTL);
+const memoryStorage = multer.memoryStorage();
+authRouter.post("/updateProfile",verifyAuthentication,updateProfile);
 
 module.exports = {
   authRouter,

@@ -63,7 +63,7 @@ expirationDate.setDate(expirationDate.getDate() + 7);
 
 const cookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "prod",
+  secure: true,
   expires: expirationDate,
   sameSite: true,
 };

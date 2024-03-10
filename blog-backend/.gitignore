@@ -58,7 +58,7 @@ build/Release
 certificates/
 node_modules/
 jspm_packages/
-
+uploads/
 # Snowpack dependency directory (https://snowpack.dev/)
 
 web_modules/

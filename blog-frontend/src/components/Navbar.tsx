@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { motion } from "framer-motion";
 import AnimatedButton, { ButtonBorder, ButtonFill } from "./AnimatedButton";
+import { AuthContext } from "../context/AuthContext";
 const Navbar = () => {
   const variants = {
     light: {
@@ -14,8 +15,8 @@ const Navbar = () => {
     },
   };
 
+  const { isAuthenticated } = useContext(AuthContext);
   const { setTheme, bool } = useContext(ThemeContext);
-
   return (
     <div
       className={`flex gap-6 py-4 px-10 backdrop-blur-sm font-content items-center dark:text-text-dark text-text-light}`}
@@ -38,13 +39,21 @@ const Navbar = () => {
           )}
         </button>
       </motion.div>
-      <AnimatedButton to={"/login"}>
-        <ButtonBorder>Log In</ButtonBorder>
-      </AnimatedButton>
+      {isAuthenticated ? (
+        <AnimatedButton>
+          <ButtonFill>Log Out</ButtonFill>
+        </AnimatedButton>
+      ) : (
+        <>
+          <AnimatedButton to={"/login"}>
+            <ButtonBorder>Log In</ButtonBorder>
+          </AnimatedButton>
 
-      <AnimatedButton to={"/login"}>
-        <ButtonFill>Sign Up</ButtonFill>
-      </AnimatedButton>
+          <AnimatedButton to={"/login"}>
+            <ButtonFill>Sign Up</ButtonFill>
+          </AnimatedButton>
+        </>
+      )}
     </div>
   );
 };

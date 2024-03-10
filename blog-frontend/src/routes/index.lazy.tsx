@@ -12,7 +12,6 @@ export const Route = createLazyFileRoute("/")({
 
 function Index() {
   const { theme, bool } = useContext(ThemeContext);
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 100 }}
