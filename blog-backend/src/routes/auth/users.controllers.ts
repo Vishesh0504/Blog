@@ -7,6 +7,8 @@ import { authenticator } from "otplib";
 import { Request, Response } from "express";
 import { VerifyCallback } from "passport-oauth2";
 import { Profile as GoogleProfile } from "passport-google-oauth20";
+import { createClient } from '@supabase/supabase-js'
+
 require("dotenv").config({ path: "../../../.env" });
 import {
   db_config,
@@ -49,21 +51,22 @@ async function verifyUser(
   const client = new Client(db_config);
   try {
     await client.connect();
-    // console.log(profile)
     user = await client.query(
       "SELECT * FROM user_credentials WHERE issuer = $1 and email = $2",
       [issuer, profile._json.email],
     );
-    // console.log(user);
     if (user.rows.length === 0) {
+
       const id = await client.query(
-        "INSERT INTO user_credentials(username,email,issuer) values($1,$2,$3 ) RETURNING id",
-        [profile.displayName, profile._json.email, issuer],
+
+        "INSERT INTO user_credentials(username,email,issuer,picture) values($1,$2,$3,$4) RETURNING id",
+        [profile.displayName, profile._json.email, issuer,profile._json.picture],
       );
       const createdUser = {
         id: id.rows[0].id,
         name: profile.displayName,
         email: profile._json.email!,
+        picture:profile._json.picture!
       };
       // console.log(createdUser);
       let token = await generateJWT(createdUser);
@@ -73,11 +76,11 @@ async function verifyUser(
         user: createdUser,
       });
     } else {
-      console.log("hello");
       const exisitingUser = {
         id: user.rows[0].id,
         name: user.rows[0].username,
         email: user.rows[0].email,
+        picture:user.rows[0].picture
       };
       let token = await generateJWT(exisitingUser);
       return done(null, {
@@ -197,11 +200,16 @@ async function verifyOtp(req: Request, res: Response) {
               message: "OTP verified,user created",
               redirectUrl: `/onboarding`,
             });
+            res.cookie("user", JSON.stringify(createdUser), {
+              secure: false,
+              sameSite: true,
+            });
         } else {
           let exisitingUser = {
             id: user.rows[0].id,
             name: user.rows[0].username,
             email: user.rows[0].email,
+            picture:user.rows[0].picture
           };
           let token = generateJWT(exisitingUser);
           res
@@ -210,6 +218,10 @@ async function verifyOtp(req: Request, res: Response) {
             .json({
               message: "OTP verified,existing user found",
               redirectUrl: `/dashboard`,
+            });
+            res.cookie("user", JSON.stringify(exisitingUser), {
+              secure: false,
+              sameSite: true,
             });
         }
       } else {
@@ -246,4 +258,31 @@ async function fetchTTL(req: Request, res: Response) {
   }
 }
 
-export { verifyUserGoogle, verifyUserGithub, generateOtp, verifyOtp, fetchTTL };
+
+async function updateProfile(req:Request,res:Response){
+  const id = req.user!.id;
+  const client = new Client(db_config);
+  try{
+    await client.connect();
+    await client.query("Update user_credentials set username =$1,picture=$2 where id=$3",[req.body.name,req.body.imgURL,id])
+    const updatedUser ={
+      id :id,
+      name:req.body.name,
+      email:req.user?.email,
+      picture:req.body.imgURL
+    };
+    res.status(200).cookie("user", JSON.stringify(updatedUser), {
+      secure: false,
+      sameSite: true,
+    }).json({message:"User Updated successfully"});
+  }catch(err)
+  {
+    console.log(err);
+    res.status(500).send({message:err})
+  }
+}
+
+
+
+
+export { verifyUserGoogle, verifyUserGithub, generateOtp, verifyOtp, fetchTTL,updateProfile};
