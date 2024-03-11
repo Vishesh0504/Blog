@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const cookie_parser = require("cookie-parser");
 const helmet = require("helmet");
 const logger = require("morgan");
+import { URL_ORIGIN } from "../constants";
 import { verifyAuthentication } from "./routes/protected";
 const { authRouter } = require("./routes/auth/users.routes");
 const cors = require("cors");
@@ -14,8 +15,10 @@ const passport = require("passport");
 const PORT = process.env.serverPort;
 const app = express();
 
-app.use(cors());
 app.use(logger("dev"));
+// app.options('*', cors())
+app.use(cors({origin:`${URL_ORIGIN}`,credentials:true}));
+
 app.use(helmet());
 app.use(cookie_parser());
 app.use(passport.initialize());

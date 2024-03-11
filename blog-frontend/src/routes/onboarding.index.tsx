@@ -12,16 +12,19 @@ export const Route = createFileRoute("/onboarding/")({
   component: () => <Onboarding />,
 });
 const Onboarding = () => {
-  interface data{
-    name?:string;
-    url?:string;
-  }
+
   const supabaseUrl = import.meta.env.VITE_supabase_url;
   const supabaseKey = import.meta.env.VITE_supabase_public;
-  const [uploadedImage, setUploadedimage] = useState<Blob | string>("");
+  interface data{
+    name?:string;
+    imgURL?:string;
+  }
+  const [picture, setPicture] = useState("");
+  const [custom, setCustom] = useState(false);
+  const [imgURL,setImgURL] = useState("");
   const navigate = useNavigate();
   const {user} = useContext(AuthContext);
-  const id = user?.id;
+
   const mutationUpload = useMutation({
     mutationFn: (values: data) => {
       console.log(values);
@@ -30,39 +33,74 @@ const Onboarding = () => {
       });
     },
   });
-  const [custom, setCustom] = useState(false);
-  const [type,setType] = useState("");
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     setCustom(true);
-    const file = event.target?.files[0];
-    setPicture(URL.createObjectURL(file));
-    setUploadedimage(file);
-    setType(file.type.split('/')[1]);
+    if(event.target.files)
+    {
+      const file = event.target?.files[0];
+      await handleSupabase(file);
+
+    }
   };
-  const handleSupabase = async () => {
+
+  const retrievePublicURL =async (fullPath:string)=>{
+    const supabase = createClient(supabaseUrl,supabaseKey);
+    const {data} =await supabase.storage.from("ProfilePicturesBlog").getPublicUrl(fullPath);
+    console.log(data);
+    setImgURL(data.publicUrl);
+  }
+  const handleSupabase = async (file:File) => {
+
     const supabase = createClient(supabaseUrl, supabaseKey);
+    const id = user?.id;
+    const extension = file.type.split('/')[1];
     try {
       const { data, error } = await supabase.storage
         .from("ProfilePicturesBlog")
-        .upload(`${id}.${type}`, uploadedImage);
+        .upload(`${id}.${extension}`, file,{upsert:true});
+
       if (error) {
         throw error;
       } else {
         console.log(data);
-        return data.path
+        setPicture(URL.createObjectURL(file));
+        toast.success("Image Uploaded successfully");
+        retrievePublicURL(data.path);
       }
-    } catch (err) {
+    } catch (err:unknown) {
       console.log(err);
-      toast.error(`error:${err.message},Please try again`);
-      return
+      if(err instanceof Error)
+      {
+        toast.error(`We are facing some error,Please try again`);
+      }
     }
   };
-  const [picture, setPicture] = useState("");
+
   useEffect(() => {
     if (user && user.picture && !custom) {
       setPicture(user.picture);
     }
   }, [user, picture, custom]);
+
+  useEffect(()=>{
+    if(mutationUpload.isPending)
+    {
+      toast.loading("Updating user");
+    }else if(mutationUpload.isError)
+    {
+
+      if(mutationUpload.error.response){
+        toast.error(mutationUpload.error.response.data.message)
+      }else{
+        toast.error(mutationUpload.error.message)
+      }
+    }else if(mutationUpload.isSuccess){
+      toast.success(mutationUpload.data?.data.message)
+      setTimeout(()=>{navigate({to:"/onboarding/role"})},1000)
+    }
+
+  return ()=>toast.dismiss()
+  },[mutationUpload,navigate])
 
   return (
     <div className="py-28 text-text-light dark:text-text-dark flex justify-center">
@@ -80,8 +118,8 @@ const Onboarding = () => {
               toast.error("name is required");
               return
             }
-            if (custom) {
-              data = {...data,url:await handleSupabase()};
+            if (custom && imgURL) {
+              data = {...data,imgURL:imgURL}
             }
             mutationUpload.mutate(data);
           } else {
@@ -90,7 +128,7 @@ const Onboarding = () => {
         }}
       >
         <Form>
-          <div className="flex flex-1 flex-col gap-6  border font-content rounded-md border-gray-300 dark:border-gray-700 px-16 py-12">
+          <div className="flex flex-1 flex-col gap-6 border font-content rounded-md border-gray-300 dark:border-gray-700 px-16 py-12">
             <div className="flex flex-col gap-2">
               <h1 className="font-heading text-3xl font-semibold">
                 Create your account
@@ -118,14 +156,14 @@ const Onboarding = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-6 -mt-10">
                 <p className="flex-1 "> Profile Picture :</p>
                 <div className="relative border-10 dark:border-gray-600 border-gray-300 rounded-full ml-10">
                   {picture ? (
                     <img className="rounded-full size-40" src={picture} />
                   ) : (
                     <img
-                      className="rounded-full size-48"
+                      className="rounded-full size-40"
                       src="/assets/profilePictureStock.webp"
                     />
                   )}
@@ -149,7 +187,8 @@ const Onboarding = () => {
             </div>
             <button
               type="submit"
-              className="mt-4 w-fit rounded-xl dark:bg-secondary-dark bg-secondary-light px-4 py-3 ml-auto"
+              disabled={mutationUpload.isPending}
+              className="mt-4 w-fit rounded-xl dark:bg-secondary-dark bg-secondary-light px-4 py-3 ml-auto disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next
             </button>
@@ -159,3 +198,4 @@ const Onboarding = () => {
     </div>
   );
 };
+
