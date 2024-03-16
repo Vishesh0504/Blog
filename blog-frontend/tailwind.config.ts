@@ -33,7 +33,7 @@ export default {
       },
       fontFamily: {
         content: "Graphik",
-        heading: "Montserrat",
+        heading: "Value-Serif",
       },
     },
   },
