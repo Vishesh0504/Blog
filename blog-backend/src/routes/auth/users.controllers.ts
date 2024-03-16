@@ -7,7 +7,6 @@ import { authenticator } from "otplib";
 import { Request, Response } from "express";
 import { VerifyCallback } from "passport-oauth2";
 import { Profile as GoogleProfile } from "passport-google-oauth20";
-import { createClient } from '@supabase/supabase-js'
 
 require("dotenv").config({ path: "../../../.env" });
 import {

@@ -14,7 +14,6 @@ import {
 import { google_auth_options, github_auth_options } from "./auth.config";
 import { URL_ORIGIN, cookieOptions } from "../../../constants";
 const authRouter = Router();
-const multer = require('multer');
 
 passport.use(new GoogleStrategy(google_auth_options, verifyUserGoogle));
 passport.use(new GithubStrategy(github_auth_options, verifyUserGithub));
@@ -90,7 +89,6 @@ authRouter.post("/local/generateOTP", generateOtp);
 authRouter.post("/local/verifyOTP", verifyOtp);
 
 authRouter.post("/fetchTTL", fetchTTL);
-const memoryStorage = multer.memoryStorage();
 authRouter.post("/updateProfile",verifyAuthentication,updateProfile);
 
 module.exports = {
