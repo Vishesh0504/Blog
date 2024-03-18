@@ -1,5 +1,5 @@
 import {  Router } from "express";
-import { verifyAuthentication } from "../protected";
+import { verifyAuthentication } from "../../protected";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as GithubStrategy } from "passport-github2";
@@ -69,7 +69,7 @@ authRouter.get("/login/github/callback", (req, res, next) => {
         res
           .status(500)
           .json({ message: "Login/Signup failed please try again" });
-        return res.redirect(URL_ORIGIN + "/login");
+        // return res.redirect(URL_ORIGIN + "/login");
       } else if (user.jwt) {
         res
           .cookie("access_token", user.jwt, cookieOptions)

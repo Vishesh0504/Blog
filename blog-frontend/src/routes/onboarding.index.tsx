@@ -71,6 +71,7 @@ const Onboarding = () => {
       console.log(err);
       if(err instanceof Error)
       {
+        console.log(err);
         toast.error(`We are facing some error,Please try again`);
       }
     }
