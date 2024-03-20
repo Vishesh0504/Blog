@@ -35,10 +35,11 @@ authRouter.get("/login/google/callback", (req, res, next) => {
         console.log(err);
         res.redirect(URL_ORIGIN + "/login");
       } else if (user.jwt) {
-        res.cookie("access_token", user.jwt, cookieOptions);
+        res.cookie("access_token", user.jwt, {sameSite:'strict',secure:true,domain:"localhost",httpOnly:true,expires:cookieOptions.expires});
         res.cookie("user", JSON.stringify(user.user), {
           secure: false,
           sameSite: true,
+          domain: "localhost",
         });
         if (user.signup) {
           return res.redirect(URL_ORIGIN + "/onboarding");
@@ -73,7 +74,7 @@ authRouter.get("/login/github/callback", (req, res, next) => {
       } else if (user.jwt) {
         res
           .cookie("access_token", user.jwt, cookieOptions)
-          .cookie("user", JSON.stringify(user.user), { secure: false, sameSite: true });
+          .cookie("user", JSON.stringify(user.user), { secure: false, sameSite: true,domain:"localhost"});
         if (user.signup) {
           res.redirect(URL_ORIGIN + "/onboarding");
         } else {

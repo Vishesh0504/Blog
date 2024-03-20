@@ -194,14 +194,14 @@ async function verifyOtp(req: Request, res: Response) {
           let token = generateJWT(createdUser);
           res
             .status(201)
-            .cookie("access_token", token, cookieOptions)
+            .cookie("access_token", token, {sameSite:"lax",secure:false,httpOnly:true})
             .json({
               message: "OTP verified,user created",
               redirectUrl: `/onboarding`,
             });
             res.cookie("user", JSON.stringify(createdUser), {
               secure: false,
-              sameSite: true,
+              sameSite: "lax",
             });
         } else {
           let exisitingUser = {
@@ -221,6 +221,7 @@ async function verifyOtp(req: Request, res: Response) {
             res.cookie("user", JSON.stringify(exisitingUser), {
               secure: false,
               sameSite: true,
+              domain: "localhost",
             });
         }
       } else {
@@ -278,6 +279,7 @@ async function updateProfile(req:Request,res:Response){
   {
     console.log(err);
     res.status(500).send({message:err})
+    process.exit(1);
   }
 }
 

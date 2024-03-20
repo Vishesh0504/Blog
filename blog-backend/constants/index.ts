@@ -65,7 +65,8 @@ const cookieOptions = {
   httpOnly: true,
   secure: true,
   expires: expirationDate,
-  sameSite: true,
+  // domain: "localhost",
+  // sameSite:"lax"
 };
-const URL_ORIGIN = "http://localhost:5173";
+const URL_ORIGIN = "https://localhost:5173";
 export { connect_db, db_config, htmlContent, cookieOptions, URL_ORIGIN };
