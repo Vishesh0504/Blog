@@ -10,6 +10,7 @@ import {
   verifyOtp,
   fetchTTL,
   updateProfile,
+  handleLogOut,
 } from "./users.controllers";
 import { google_auth_options, github_auth_options } from "./auth.config";
 import { URL_ORIGIN, cookieOptions } from "../../../constants";
@@ -92,6 +93,8 @@ authRouter.post("/local/verifyOTP", verifyOtp);
 authRouter.post("/fetchTTL", fetchTTL);
 authRouter.post("/updateProfile",verifyAuthentication,updateProfile);
 
+
+authRouter.get("/logout", handleLogOut)
 module.exports = {
   authRouter,
 };

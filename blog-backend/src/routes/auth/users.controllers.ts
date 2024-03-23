@@ -194,7 +194,7 @@ async function verifyOtp(req: Request, res: Response) {
           let token = generateJWT(createdUser);
           res
             .status(201)
-            .cookie("access_token", token, {sameSite:"lax",secure:false,httpOnly:true})
+            .cookie("access_token", token,cookieOptions)
             .json({
               message: "OTP verified,user created",
               redirectUrl: `/onboarding`,
@@ -283,7 +283,9 @@ async function updateProfile(req:Request,res:Response){
   }
 }
 
+async function handleLogOut(req:Request,res:Response){
+  return res.clearCookie("access_token",cookieOptions).status(200).json({message:"Logged out successfully"});
+}
 
 
-
-export { verifyUserGoogle, verifyUserGithub, generateOtp, verifyOtp, fetchTTL,updateProfile};
+export { verifyUserGoogle, verifyUserGithub, generateOtp, verifyOtp, fetchTTL,updateProfile,handleLogOut};

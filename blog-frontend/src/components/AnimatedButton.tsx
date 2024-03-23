@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 interface props {
   children: ReactNode;
   to?: string;
+  onClick?: () => void;
 }
 
 const AnimatedButton = ({ children, to }: props) => {
@@ -16,9 +17,9 @@ const AnimatedButton = ({ children, to }: props) => {
   );
 };
 
-export const ButtonFill = ({ children }: props) => {
+export const ButtonFill = ({ children,onClick}: props) => {
   return (
-    <button
+    <button onClick={onClick}
       className={`rounded-lg px-4 py-2 flex gap-2 items-center justify-center bg-secondary-light dark:bg-secondary-dark}`}
     >
       {children}

@@ -60,13 +60,19 @@ function htmlContent(email: string, otp: string): string {
 
 const expirationDate = new Date();
 expirationDate.setDate(expirationDate.getDate() + 7);
-
-const cookieOptions = {
+type MyCookieOptions = {
+  httpOnly?: boolean;
+  secure?: boolean;
+  expires?: Date;
+  domain?: string;
+  sameSite?: boolean | "strict" | "lax" | "none";
+};
+const cookieOptions:MyCookieOptions= {
   httpOnly: true,
   secure: true,
   expires: expirationDate,
-  // domain: "localhost",
-  // sameSite:"lax"
+  domain: "localhost",
+  sameSite:"strict"
 };
 const URL_ORIGIN = "https://localhost:5173";
 export { connect_db, db_config, htmlContent, cookieOptions, URL_ORIGIN };
