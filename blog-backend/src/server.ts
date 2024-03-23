@@ -7,7 +7,7 @@ const cookie_parser = require("cookie-parser");
 const helmet = require("helmet");
 const logger = require("morgan");
 import { URL_ORIGIN } from "../constants";
-import { verifyAuthentication } from "./routes/protected";
+import { verifyAuthentication } from "./protected";
 const { authRouter } = require("./routes/auth/users.routes");
 const cors = require("cors");
 require("dotenv").config({ path: "../.env" });

@@ -194,14 +194,14 @@ async function verifyOtp(req: Request, res: Response) {
           let token = generateJWT(createdUser);
           res
             .status(201)
-            .cookie("access_token", token, cookieOptions)
+            .cookie("access_token", token,cookieOptions)
             .json({
               message: "OTP verified,user created",
               redirectUrl: `/onboarding`,
             });
             res.cookie("user", JSON.stringify(createdUser), {
               secure: false,
-              sameSite: true,
+              sameSite: "lax",
             });
         } else {
           let exisitingUser = {
@@ -221,6 +221,7 @@ async function verifyOtp(req: Request, res: Response) {
             res.cookie("user", JSON.stringify(exisitingUser), {
               secure: false,
               sameSite: true,
+              domain: "localhost",
             });
         }
       } else {
@@ -278,10 +279,35 @@ async function updateProfile(req:Request,res:Response){
   {
     console.log(err);
     res.status(500).send({message:err})
+    process.exit(1);
+  }
+}
+
+async function handleLogOut(req:Request,res:Response){
+  return res.clearCookie("access_token",cookieOptions).status(200).json({message:"Logged out successfully"});
+}
+
+async function setRole(req:Request,res:Response){
+  const client = new Client(db_config);
+  try{
+    await client.connect();
+    await client.query("Update user_credentials set role =$1 where id=$2",[req.body.role,req.user!.id])
+    res.status(200).json({message:"Role updated successfully"});
+  }catch(err){
+    console.log(err);
+    res.status(500).json({message:err});
+  }finally{
+    await client.end();
   }
 }
 
 
-
-
-export { verifyUserGoogle, verifyUserGithub, generateOtp, verifyOtp, fetchTTL,updateProfile};
+export {
+  verifyUserGoogle,
+  verifyUserGithub,
+  generateOtp,
+  verifyOtp,
+  fetchTTL,
+  updateProfile,
+  handleLogOut,
+  setRole,};
