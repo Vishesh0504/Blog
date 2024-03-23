@@ -287,5 +287,27 @@ async function handleLogOut(req:Request,res:Response){
   return res.clearCookie("access_token",cookieOptions).status(200).json({message:"Logged out successfully"});
 }
 
+async function setRole(req:Request,res:Response){
+  const client = new Client(db_config);
+  try{
+    await client.connect();
+    await client.query("Update user_credentials set role =$1 where id=$2",[req.body.role,req.user!.id])
+    res.status(200).json({message:"Role updated successfully"});
+  }catch(err){
+    console.log(err);
+    res.status(500).json({message:err});
+  }finally{
+    await client.end();
+  }
+}
 
-export { verifyUserGoogle, verifyUserGithub, generateOtp, verifyOtp, fetchTTL,updateProfile,handleLogOut};
+
+export {
+  verifyUserGoogle,
+  verifyUserGithub,
+  generateOtp,
+  verifyOtp,
+  fetchTTL,
+  updateProfile,
+  handleLogOut,
+  setRole,};

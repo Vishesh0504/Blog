@@ -11,6 +11,7 @@ import {
   fetchTTL,
   updateProfile,
   handleLogOut,
+  setRole,
 } from "./users.controllers";
 import { google_auth_options, github_auth_options } from "./auth.config";
 import { URL_ORIGIN, cookieOptions } from "../../../constants";
@@ -19,7 +20,7 @@ const authRouter = Router();
 passport.use(new GoogleStrategy(google_auth_options, verifyUserGoogle));
 passport.use(new GithubStrategy(github_auth_options, verifyUserGithub));
 // For google auth
-
+authRouter.get("/logout", handleLogOut)
 authRouter.get(
   "/login/google",
   passport.authenticate("google", { scope: ["profile", "email"] }),
@@ -92,9 +93,9 @@ authRouter.post("/local/verifyOTP", verifyOtp);
 
 authRouter.post("/fetchTTL", fetchTTL);
 authRouter.post("/updateProfile",verifyAuthentication,updateProfile);
+authRouter.post("/updateProfile/setRole",verifyAuthentication,setRole);
 
 
-authRouter.get("/logout", handleLogOut)
 module.exports = {
   authRouter,
 };

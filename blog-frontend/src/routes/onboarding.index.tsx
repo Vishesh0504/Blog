@@ -4,7 +4,7 @@ import { Formik, Form, Field } from "formik";
 import { AuthContext } from "../context/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import { URL_ORIGIN } from "../constants";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { createClient } from "@supabase/supabase-js";
 import toast from "react-hot-toast";
 
@@ -54,6 +54,7 @@ const Onboarding = () => {
     const supabase = createClient(supabaseUrl, supabaseKey);
     const id = user?.id;
     const extension = file.type.split('/')[1];
+    const toastId = toast.loading("Uploading Image");
     try {
       const { data, error } = await supabase.storage
         .from("ProfilePicturesBlog")
@@ -62,8 +63,9 @@ const Onboarding = () => {
       if (error) {
         throw error;
       } else {
-        console.log(data);
+        // console.log(data);
         setPicture(URL.createObjectURL(file));
+        toast.dismiss(toastId);
         toast.success("Image Uploaded successfully");
         retrievePublicURL(data.path);
       }
@@ -72,6 +74,7 @@ const Onboarding = () => {
       if(err instanceof Error)
       {
         console.log(err);
+        toast.dismiss(toastId);
         toast.error(`We are facing some error,Please try again`);
       }
     }
@@ -89,9 +92,9 @@ const Onboarding = () => {
       toast.loading("Updating user");
     }else if(mutationUpload.isError)
     {
-
+      if(mutationUpload.error instanceof AxiosError){
       if(mutationUpload.error.response){
-        toast.error(mutationUpload.error.response.data.message)
+        toast.error(mutationUpload.error.response.data.message)}
       }else{
         toast.error(mutationUpload.error.message)
       }
@@ -104,7 +107,16 @@ const Onboarding = () => {
   },[mutationUpload,navigate])
 
   return (
-    <div className="py-28 text-text-light dark:text-text-dark flex justify-center">
+    <div className="py-8 text-text-light dark:text-text-dark flex justify-center">
+      <div className="w-fit flex flex-col gap-10 px-16 py-12">
+      <div className="flex flex-col gap-2">
+          <p className="dark:text-neutral-400 text-neutral-600 font-semibold ">Step 1: Create your account</p>
+          <h1 className="font-heading text-3xl font-semibold mb-2">User Onboarding</h1>
+          <div className="flex gap-2">
+            <hr className="w-2/3 border-4 rounded-md border-accent-dark opacity-75"></hr>
+            <hr className="w-1/3 border-4 rounded-md dark:border-gray-600 border-gray-300"></hr>
+          </div>
+      </div>
       <Formik
         initialValues={{
           name: user?.name,
@@ -129,7 +141,7 @@ const Onboarding = () => {
         }}
       >
         <Form>
-          <div className="flex flex-1 flex-col gap-6 border font-content rounded-md border-gray-300 dark:border-gray-700 px-16 py-12">
+          <div className="flex flex-1 flex-col gap-6 border-y-2 py-8 font-content border-gray-300 dark:border-gray-500 ">
             <div className="flex flex-col gap-2">
               <h1 className="font-heading text-3xl font-semibold">
                 Create your account
@@ -137,10 +149,10 @@ const Onboarding = () => {
               <p className="ml-2"> Let's git init your journey</p>
             </div>
 
-            <div className="flex flex-1 gap-40 text-gray-600 dark:text-gray-400 font-semibold mx-5">
+            <div className="flex flex-1 gap-40 text-gray-800 dark:text-gray-300 font-semibold mx-5">
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
-                  <label className=" ">Full Name* :</label>
+                  <label className=" ">Full Name <span className="text-red-600">*</span> :</label>
                   <Field
                     name="name"
                     placeholder="Enter your name"
@@ -148,7 +160,7 @@ const Onboarding = () => {
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label className="">Your Email Address* :</label>
+                  <label className="">Email Address <span className="text-red-600">*</span>:</label>
                   <input
                     disabled
                     value={user?.email || ""}
@@ -196,6 +208,7 @@ const Onboarding = () => {
           </div>
         </Form>
       </Formik>
+    </div>
     </div>
   );
 };

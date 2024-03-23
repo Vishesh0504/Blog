@@ -20,7 +20,7 @@ const AnimatedButton = ({ children, to }: props) => {
 export const ButtonFill = ({ children,onClick}: props) => {
   return (
     <button onClick={onClick}
-      className={`rounded-lg px-4 py-2 flex gap-2 items-center justify-center bg-secondary-light dark:bg-secondary-dark}`}
+      className={`font-medium rounded-lg px-4 py-2 flex gap-2 items-center justify-center bg-secondary-light dark:bg-secondary-dark}`}
     >
       {children}
     </button>
