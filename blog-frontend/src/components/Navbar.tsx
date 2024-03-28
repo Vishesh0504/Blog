@@ -1,10 +1,10 @@
-import { Link,useNavigate} from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { motion } from "framer-motion";
 import AnimatedButton, { ButtonBorder, ButtonFill } from "./AnimatedButton";
 import { AuthContext } from "../context/AuthContext";
-import {useCookies} from "react-cookie";
+import { useCookies } from "react-cookie";
 import { URL_ORIGIN } from "../constants";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -19,22 +19,23 @@ const Navbar = () => {
     },
   };
   const navigate = useNavigate();
-  const [,,removeCookie] = useCookies(['user']);
-  const handleLogOut =async ()=>{
+  const [, , removeCookie] = useCookies(["user"]);
+  const handleLogOut = async () => {
     const toastId = toast.loading("Logging out...");
-    try{
-        const res = await axios.get(`${URL_ORIGIN}/auth/logout`,{withCredentials:true})
-        toast.dismiss(toastId);
-        toast.success(`${res.data.message}`)
-      removeCookie('user');
-      navigate({to:'/login'})
-      }catch(err){
-        toast.dismiss(toastId);
-        console.log(err)
-        toast.error("Error logging out");
-      }
-
-      }
+    try {
+      const res = await axios.get(`${URL_ORIGIN}/auth/logout`, {
+        withCredentials: true,
+      });
+      toast.dismiss(toastId);
+      toast.success(`${res.data.message}`);
+      removeCookie("user");
+      navigate({ to: "/login" });
+    } catch (err) {
+      toast.dismiss(toastId);
+      console.log(err);
+      toast.error("Error logging out");
+    }
+  };
   const { isAuthenticated } = useContext(AuthContext);
   const { setTheme, bool } = useContext(ThemeContext);
   return (

@@ -1,4 +1,4 @@
-import {  Router } from "express";
+import { Router } from "express";
 import { verifyAuthentication } from "../../protected";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
@@ -20,7 +20,7 @@ const authRouter = Router();
 passport.use(new GoogleStrategy(google_auth_options, verifyUserGoogle));
 passport.use(new GithubStrategy(github_auth_options, verifyUserGithub));
 // For google auth
-authRouter.get("/logout", handleLogOut)
+authRouter.get("/logout", handleLogOut);
 authRouter.get(
   "/login/google",
   passport.authenticate("google", { scope: ["profile", "email"] }),
@@ -37,7 +37,13 @@ authRouter.get("/login/google/callback", (req, res, next) => {
         console.log(err);
         res.redirect(URL_ORIGIN + "/login");
       } else if (user.jwt) {
-        res.cookie("access_token", user.jwt, {sameSite:'strict',secure:true,domain:"localhost",httpOnly:true,expires:cookieOptions.expires});
+        res.cookie("access_token", user.jwt, {
+          sameSite: "strict",
+          secure: true,
+          domain: "localhost",
+          httpOnly: true,
+          expires: cookieOptions.expires,
+        });
         res.cookie("user", JSON.stringify(user.user), {
           secure: false,
           sameSite: true,
@@ -76,7 +82,11 @@ authRouter.get("/login/github/callback", (req, res, next) => {
       } else if (user.jwt) {
         res
           .cookie("access_token", user.jwt, cookieOptions)
-          .cookie("user", JSON.stringify(user.user), { secure: false, sameSite: true,domain:"localhost"});
+          .cookie("user", JSON.stringify(user.user), {
+            secure: false,
+            sameSite: true,
+            domain: "localhost",
+          });
         if (user.signup) {
           res.redirect(URL_ORIGIN + "/onboarding");
         } else {
@@ -92,9 +102,8 @@ authRouter.post("/local/generateOTP", generateOtp);
 authRouter.post("/local/verifyOTP", verifyOtp);
 
 authRouter.post("/fetchTTL", fetchTTL);
-authRouter.post("/updateProfile",verifyAuthentication,updateProfile);
-authRouter.post("/updateProfile/setRole",verifyAuthentication,setRole);
-
+authRouter.post("/updateProfile", verifyAuthentication, updateProfile);
+authRouter.post("/updateProfile/setRole", verifyAuthentication, setRole);
 
 module.exports = {
   authRouter,

@@ -8,6 +8,7 @@ const helmet = require("helmet");
 const logger = require("morgan");
 import { URL_ORIGIN } from "../constants";
 import { verifyAuthentication } from "./protected";
+import blogRouter from "./routes/blog/ blog.routes";
 const { authRouter } = require("./routes/auth/users.routes");
 const cors = require("cors");
 require("dotenv").config({ path: "../.env" });
@@ -17,7 +18,7 @@ const app = express();
 
 app.use(logger("dev"));
 // app.options('*', cors())
-app.use(cors({origin:`${URL_ORIGIN}`,credentials:true}));
+app.use(cors({ origin: `${URL_ORIGIN}`, credentials: true }));
 
 app.use(helmet());
 app.use(cookie_parser());
@@ -26,8 +27,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/auth", authRouter);
-
-app.get('/',verifyAuthentication,()=>{console.log("hi")})
+app.use("/blog", verifyAuthentication, blogRouter);
 https
   .createServer(
     {

@@ -152,7 +152,9 @@ function ParentComponent() {
   const navigate = useNavigate({ from: "/login/enterOTP" });
   const mutation = useMutation({
     mutationFn: (data) => {
-      return axios.post(`${URL_ORIGIN}/auth/local/verifyOTP`, data,{withCredentials:true});
+      return axios.post(`${URL_ORIGIN}/auth/local/verifyOTP`, data, {
+        withCredentials: true,
+      });
     },
     onSuccess: (data) => {
       const redirectURL = data.data.redirectUrl;

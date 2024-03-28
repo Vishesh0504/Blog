@@ -67,12 +67,12 @@ type MyCookieOptions = {
   domain?: string;
   sameSite?: boolean | "strict" | "lax" | "none";
 };
-const cookieOptions:MyCookieOptions= {
+const cookieOptions: MyCookieOptions = {
   httpOnly: true,
   secure: true,
   expires: expirationDate,
   domain: "localhost",
-  sameSite:"strict"
+  sameSite: "strict",
 };
 const URL_ORIGIN = "https://localhost:5173";
 export { connect_db, db_config, htmlContent, cookieOptions, URL_ORIGIN };
