@@ -3,6 +3,18 @@
 @tailwind utilities;
 
 
+@layer base {
+  h1 {
+    @apply text-4xl font-bold;
+  }
+  h2 {
+    @apply text-xl;
+  }
+  h3 {
+    @apply text-lg;
+  }
+
+}
 @font-face {
     font-family: Graphik;
     src: url("/assets/fonts/Graphik.otf") format("opentype");

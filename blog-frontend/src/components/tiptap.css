@@ -1,0 +1,76 @@
+.tiptap{
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto;
+    /* padding: 2rem; */
+    padding-block: 1.5rem;
+    @apply border-t border-slate-400 dark:border-slate-700 outline-none ;
+}
+
+.tiptap h1{
+    font-size: 2rem;
+    font-weight: 1000;
+    line-height: 1.75;
+}
+
+
+
+.tiptap h2{
+    font-size: 1.75rem;
+    font-weight: 900;
+    line-height: 1.5;
+}
+
+.tiptap h3{
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.tiptap b{
+    font-weight: 1000;
+}
+
+
+.tiptap ul {
+    @apply list-disc mx-4;
+
+  }
+
+  .tiptap ul li::marker {
+    color: #64748b;
+  }
+
+  .tiptap ol {
+    @apply list-decimal  marker:to-red-800;
+  }
+
+  .tiptap ol li::marker {
+    color: #94a3b8;
+  }
+
+  .tiptap li {
+    @apply my-1 mx-4
+  }
+
+  .tiptap pre {
+    @apply p-2 dark:bg-gray-800 bg-yellow-200 text-white rounded;
+  }
+
+  .tiptap code {
+    @apply p-1 dark:bg-gray-800 bg-light-beige  rounded;
+  }
+
+.tiptap .is-editor-empty:first-child::before {
+    color: #adb5bd;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+    font-size: 1.15em;
+    @apply font-content
+  }
+
+.tiptap mark{
+  @apply text-text-light dark:text-text-light
+}
