@@ -4,11 +4,18 @@ import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 
 import "./tiptap.css";
-import { useContext,  useState } from "react";
+import {  useContext, useState } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 
+// interface TOCItem {
+//   content: string;
+//   children: TOCItem[];
+// }
+
+// type TOC = TOCItem[];
 
 const Tiptap = () => {
+  // const [toc,setToc] = useState<TOC>([]);
   const colors = ['#FFF59D', '#FFABAB', '#DCEDC8', '#E1BEE7'];
   const colorsDark=['#FFAB00','#AD1457','#00BFA5','#6200EA']
   const {bool} = useContext(ThemeContext);
@@ -27,6 +34,7 @@ const Tiptap = () => {
     ],
     content: "",
   });
+
   return (
     <div className=" w-full text-lg ">
       <div className=" caret-slate-400 font-content dark:text-slate-300 text-slate-700 min-h-screen ">
@@ -79,11 +87,10 @@ const Tiptap = () => {
             </BubbleMenu>
           )}
         </EditorContent>
-        <div className="table-of-content">
-      </div>
       </div>
     </div>
   );
-};
+}
+
 
 export default Tiptap;

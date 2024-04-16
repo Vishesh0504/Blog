@@ -154,11 +154,12 @@ async function generateOtp(req: Request, res: Response) {
       message: "OTP sent successfully",
     });
   } catch (err) {
-    res.status(400).json({
+    res.status(500).json({
       error: err,
     });
+    process.exit(1);
   } finally {
-    await redisClient.quit();
+    // await redisClient.quit();
     console.log("redis client disconnected");
   }
 }
@@ -169,12 +170,12 @@ async function verifyOtp(req: Request, res: Response) {
   try {
     const hashedOTP = await redisClient.get(`${req.body.email}_hashedOTP`);
     const salt = await redisClient.get(`${req.body.email}_salt`);
-    // console.log(req.body)
+    console.log(req.body)
     // console.log(hashedOTP);
 
     if (hashedOTP) {
       const combinedOtp = req.body.otp + salt;
-      const isOtpValid = await argon2.verify(hashedOTP!, combinedOtp, {
+      const isOtpValid = await argon2.verify(hashedOTP+'', combinedOtp, {
         type: argon2.argon2id,
       });
       if (isOtpValid) {
@@ -194,15 +195,15 @@ async function verifyOtp(req: Request, res: Response) {
             name: req.body.displayName,
             email: req.body.email,
           };
-          let token = generateJWT(createdUser);
-          res.status(201).cookie("access_token", token, cookieOptions).json({
+          let token = await generateJWT(createdUser);
+          res.status(201).cookie("access_token", token, cookieOptions).cookie("user", JSON.stringify(createdUser), {
+            secure: false,
+            sameSite: "lax",
+          }).json({
             message: "OTP verified,user created",
             redirectUrl: `/onboarding`,
           });
-          res.cookie("user", JSON.stringify(createdUser), {
-            secure: false,
-            sameSite: "lax",
-          });
+
         } else {
           let exisitingUser = {
             id: user.rows[0].id,
@@ -210,16 +211,17 @@ async function verifyOtp(req: Request, res: Response) {
             email: user.rows[0].email,
             picture: user.rows[0].picture,
           };
-          let token = generateJWT(exisitingUser);
-          res.status(201).cookie("access_token", token, cookieOptions).json({
-            message: "OTP verified,existing user found",
-            redirectUrl: `/dashboard`,
-          });
-          res.cookie("user", JSON.stringify(exisitingUser), {
+          let token = await generateJWT(exisitingUser);
+          res.status(201).cookie("access_token", token, cookieOptions)
+          .cookie("user", JSON.stringify(exisitingUser), {
             secure: false,
             sameSite: true,
             domain: "localhost",
+          }).json({
+            message: "OTP verified,existing user found",
+            redirectUrl: `/dashboard`,
           });
+
         }
       } else {
         res.status(401).json({ message: "invalid otp provided" });
@@ -231,7 +233,7 @@ async function verifyOtp(req: Request, res: Response) {
     res.status(500).json(err);
   } finally {
     await client.end();
-    await redisClient.quit();
+    // await redisClient.quit();
     console.log("client has disconnected");
   }
 }
@@ -250,7 +252,7 @@ async function fetchTTL(req: Request, res: Response) {
     // console.log(err);
     res.status(500);
   } finally {
-    await redisClient.quit();
+    // await redisClient.quit();
     console.log("redis client disconnected");
   }
 }
