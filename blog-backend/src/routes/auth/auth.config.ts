@@ -1,4 +1,4 @@
-import { Redis } from "ioredis";
+import { Redis } from "@upstash/redis";
 import { StrategyOptions } from "passport-oauth2";
 import { StrategyOptions as StrategyOptionsGithub } from "passport-github2";
 require("dotenv").config({ path: "../../../.env" });
@@ -19,9 +19,8 @@ const github_auth_options: StrategyOptionsGithub = {
 
 async function connectRedis() {
   const client = new Redis({
-    host: process.env.redisHost!,
-    port: +process.env.redisPort!,
-    password: process.env.redisPassword!,
+    url: process.env.redisHost!,
+    token: process.env.redisPassword!,
   });
   try {
     await client.ping();
@@ -29,7 +28,7 @@ async function connectRedis() {
     return client;
   } catch (err) {
     console.log(err);
-    throw err;
+    throw new Error("Redis Connection Error");
   }
 }
 export { google_auth_options, github_auth_options, connectRedis };

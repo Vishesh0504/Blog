@@ -21,7 +21,7 @@ const RootComponent = () => {
   const { theme } = useContext(ThemeContext);
   return (
     <div
-      className={`${theme === "light" ? "bg-bg-light" : "bg-bg-dark"} min-h-screen  `}
+      className={`${theme === "light" ? "bg-bg-light" : "bg-bg-dark"} min-h-screen w-full`}
     >
       <Toaster />
       <Navbar />

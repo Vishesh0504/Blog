@@ -2,8 +2,9 @@ import { Request, Response } from "express";
 import { db_config } from "../../../constants";
 const { Client } = require("pg");
 
-const client = new Client(db_config);
+
 const createBlog = async (req: Request, res: Response) => {
+  const client = new Client(db_config);
   const user_id = req.user?.id;
   const {
     blogName,
@@ -34,4 +35,23 @@ const createBlog = async (req: Request, res: Response) => {
   }
 };
 
-export { createBlog };
+const getBlog = async (req: Request, res: Response) =>
+  {
+    const client = new Client(db_config);
+    const user_id = req.params.user_id;
+    console.log('user_id:',user_id);
+    try{
+      await client.connect();
+      const blog = await client.query("Select * from blog where user_id=$1",[user_id]);
+      // console.log(blog);
+      res.status(200).json(blog.rows[0]);
+    }catch(err){
+      console.log(err);
+      res.status(500).json({error:"Internal Server Error"});
+    }finally{
+      await client.end();
+      console.log("Client Disconnected");
+    }
+  }
+
+export { createBlog,getBlog};
