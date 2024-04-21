@@ -21,7 +21,7 @@ import { Route as OnboardingSetUpBlogImport } from './routes/onboarding.setUpBlo
 import { Route as OnboardingRoleImport } from './routes/onboarding.role'
 import { Route as OnboardingInterestsImport } from './routes/onboarding.interests'
 import { Route as LoginEnterOTPImport } from './routes/login.enterOTP'
-import { Route as DashboardWriteArticleImport } from './routes/dashboard.writeArticle'
+import { Route as DashboardWriteArticlePostIdImport } from './routes/dashboard.writeArticle.$postId'
 
 // Create Virtual Routes
 
@@ -74,10 +74,11 @@ const LoginEnterOTPRoute = LoginEnterOTPImport.update({
   getParentRoute: () => LoginRoute,
 } as any)
 
-const DashboardWriteArticleRoute = DashboardWriteArticleImport.update({
-  path: '/dashboard/writeArticle',
-  getParentRoute: () => rootRoute,
-} as any)
+const DashboardWriteArticlePostIdRoute =
+  DashboardWriteArticlePostIdImport.update({
+    path: '/dashboard/writeArticle/$postId',
+    getParentRoute: () => rootRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -89,10 +90,6 @@ declare module '@tanstack/react-router' {
     }
     '/login': {
       preLoaderRoute: typeof LoginImport
-      parentRoute: typeof rootRoute
-    }
-    '/dashboard/writeArticle': {
-      preLoaderRoute: typeof DashboardWriteArticleImport
       parentRoute: typeof rootRoute
     }
     '/login/enterOTP': {
@@ -123,6 +120,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingIndexImport
       parentRoute: typeof rootRoute
     }
+    '/dashboard/writeArticle/$postId': {
+      preLoaderRoute: typeof DashboardWriteArticlePostIdImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -131,12 +132,12 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
   LoginRoute.addChildren([LoginEnterOTPRoute, LoginIndexRoute]),
-  DashboardWriteArticleRoute,
   OnboardingInterestsRoute,
   OnboardingRoleRoute,
   OnboardingSetUpBlogRoute,
   DashboardIndexRoute,
   OnboardingIndexRoute,
+  DashboardWriteArticlePostIdRoute,
 ])
 
 /* prettier-ignore-end */

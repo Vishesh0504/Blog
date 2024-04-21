@@ -19,6 +19,7 @@ const Navbar = () => {
     },
   };
   const navigate = useNavigate();
+  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
   const [, , removeCookie] = useCookies(["user"]);
   const handleLogOut = async () => {
     const toastId = toast.loading("Logging out...");
@@ -29,6 +30,7 @@ const Navbar = () => {
       toast.dismiss(toastId);
       toast.success(`${res.data.message}`);
       removeCookie("user");
+      setIsAuthenticated(false);
       navigate({ to: "/login" });
     } catch (err) {
       toast.dismiss(toastId);
@@ -36,7 +38,7 @@ const Navbar = () => {
       toast.error("Error logging out");
     }
   };
-  const { isAuthenticated } = useContext(AuthContext);
+
   const { setTheme, bool } = useContext(ThemeContext);
   return (
     <div

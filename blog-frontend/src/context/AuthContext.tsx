@@ -8,10 +8,12 @@ export interface User {
   picture: string;
 }
 interface AuthContextType {
+  setIsAuthenticated: (value: boolean) => void;
   isAuthenticated: boolean;
   user: User | undefined;
 }
 export const AuthContext = createContext<AuthContextType>({
+  setIsAuthenticated: () => {},
   isAuthenticated: false,
   user: undefined,
 });
@@ -27,7 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [cookie.user]);
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, setIsAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

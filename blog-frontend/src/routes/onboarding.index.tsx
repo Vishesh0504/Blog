@@ -47,7 +47,6 @@ const Onboarding = () => {
     const { data } = await supabase.storage
       .from("ProfilePicturesBlog")
       .getPublicUrl(fullPath);
-    console.log(data);
     setImgURL(data.publicUrl);
   };
   const handleSupabase = async (file: File) => {
