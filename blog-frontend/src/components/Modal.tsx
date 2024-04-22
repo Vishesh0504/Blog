@@ -1,12 +1,12 @@
-import React, { useEffect, useRef} from "react";
+import React, { useEffect, useRef } from "react";
+import {motion} from 'framer-motion';
 interface ModalProps {
   isOpen: boolean;
-  setIsOpen:(isOpen:boolean)=>void;
+  setIsOpen: (isOpen: boolean) => void;
   children: React.ReactNode;
-
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, setIsOpen, children}) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, setIsOpen, children }) => {
   const modalRef = useRef<HTMLDialogElement | null>(null);
   useEffect(() => {
     const modalElement = modalRef.current;
@@ -14,14 +14,16 @@ const Modal: React.FC<ModalProps> = ({ isOpen, setIsOpen, children}) => {
       if (isOpen) {
         modalElement.showModal();
       } else {
-
         modalElement.close();
       }
     }
   }, [isOpen]);
+  const variants = {
+    open: { opacity: 1, y: 0 },
+    closed: { opacity: 0, y: "-100vh" },
+  };
 
   const handleCloseModal = () => {
-
     setIsOpen(false);
   };
 
@@ -32,13 +34,24 @@ const Modal: React.FC<ModalProps> = ({ isOpen, setIsOpen, children}) => {
   };
   return (
     <>
-    {isOpen && <div className="fixed h-screen w-full backdrop-opacity-25" onClick={handleCloseModal}></div>}
-    <dialog ref={modalRef} onKeyDown={handleKeyDown} className="flex flex-col gap-3 px-8 py-6 rounded-md bg-inherit border-2 border-slate-300 dark:border-slate-700 ">
-      <button className="modal-close-btn" onClick={handleCloseModal}>
-        <img src="/assets/close.png" className="size-5 dark:invert opacity-50 flex ml-auto"/>
-      </button>
-      {children}
-    </dialog>
+      {isOpen && (
+        <motion.div
+          initial='closed'
+          animate='open'
+          exit='closed'
+          variants={variants}
+          transition={{ duration: 1 }}
+          className="fixed h-screen w-full backdrop-opacity-25"
+          onClick={handleCloseModal}
+        ></motion.div>
+      )}
+      <dialog
+        ref={modalRef}
+        onKeyDown={handleKeyDown}
+        className="dark:text-slate-300 text-slate-700 px-6 py-4 rounded-md bg-inherit border-2 border-slate-300 dark:border-slate-700 "
+      >
+        {children}
+      </dialog>
     </>
   );
 };

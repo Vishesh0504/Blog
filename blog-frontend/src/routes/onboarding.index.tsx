@@ -26,7 +26,6 @@ const Onboarding = () => {
 
   const mutationUpload = useMutation({
     mutationFn: (values: data) => {
-      console.log(values);
       return axios.post(`${URL_ORIGIN}/auth/updateProfile`, values, {
         withCredentials: true,
       });

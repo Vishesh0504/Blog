@@ -4,23 +4,28 @@ import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
 import "./tiptap.css";
-import { useState, memo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   TableOfContentData,
   TableOfContents,
   getHierarchicalIndexes,
 } from "@tiptap-pro/extension-table-of-contents";
-import { TableOfContent } from "./TableOfContent";
+import Paragraph from "@tiptap/extension-paragraph";
 
-const MemorizedToC = memo(TableOfContent);
-const Tiptap = ({setEditor}:{setEditor:(editor:Editor)=>void}) => {
+
+
+const Tiptap = ({ setEditor,setItems }:
+  { setEditor: (editor: Editor) => void,
+  setItems:(items:TableOfContentData)=>void
+}) => {
   const colors = ["#FB7185", "#FDBA74", "#A5F3FC", "#A5B4FC"];
   const [highlightColor, setHighlightColor] = useState(colors[0]);
-  const [items, setItems] = useState<TableOfContentData>([]);
   const [currentColor, setCurrentColor] = useState(0);
   const editor = useEditor({
     extensions: [
       StarterKit,
+      Paragraph,
+
       Highlight.configure({
         multicolor: true,
       }),
@@ -34,24 +39,23 @@ const Tiptap = ({setEditor}:{setEditor:(editor:Editor)=>void}) => {
           setItems(content);
         },
       }),
-      CharacterCount
+      CharacterCount,
     ],
     content: "",
   });
 
-  useEffect(()=>{
-    editor && editor.on("update",()=>{
-      setEditor(editor);
-    })
-
-  },[editor,setEditor]);
+  useEffect(() => {
+    editor &&
+      editor.on("update", () => {
+        setEditor(editor);
+      });
+  }, [editor, setEditor]);
   if (!editor) {
     return null;
   }
   return (
-    <div className="flex-1 w-full text-lg flex justify-between gap-10">
-      <div className=" caret-slate-400 font-content dark:text-slate-300 text-slate-700 min-h-screen flex-1 w-4/5">
-        <EditorContent editor={editor}>
+    <div className="text-lg caret-slate-400 font-content dark:text-slate-300 text-slate-700 min-h-screen">
+        <EditorContent editor={editor} className="break-words">
           {editor && (
             <BubbleMenu editor={editor!}>
               <div className="flex px-3 py-1 rounded-md gap-2 font-normal items-center font-heading border border-slate-200 dark:border-slate-800 dark:bg-bg-dark bg-bg-light shadow-md">
@@ -99,28 +103,27 @@ const Tiptap = ({setEditor}:{setEditor:(editor:Editor)=>void}) => {
                 </button>
                 {editor.isActive("highlight") && (
                   <div className="flex gap-2">
-                    {
-                      colors.map((color, i) => {
-                          return (
-                            <button
-                              style={{ backgroundColor: color }}
-                              onClick={() => {
-                                setCurrentColor(i);
-                                setHighlightColor(color);
-                                editor
-                                  .chain()
-                                  .focus()
-                                  .toggleHighlight({ color: color })
-                                  .run();
-                              }}
-                              className={`rounded-full  border-2  ${
-                                currentColor === i
-                                  ? "opacity-100 border-black"
-                                  : "opacity-40"
-                              } border-slate-200 dark:border-slate-800 size-6`}
-                            ></button>
-                          );
-                        })}
+                    {colors.map((color, i) => {
+                      return (
+                        <button
+                          style={{ backgroundColor: color }}
+                          onClick={() => {
+                            setCurrentColor(i);
+                            setHighlightColor(color);
+                            editor
+                              .chain()
+                              .focus()
+                              .toggleHighlight({ color: color })
+                              .run();
+                          }}
+                          className={`rounded-full  border-2  ${
+                            currentColor === i
+                              ? "opacity-100 border-black"
+                              : "opacity-40"
+                          } border-slate-200 dark:border-slate-800 size-6`}
+                        ></button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -128,11 +131,6 @@ const Tiptap = ({setEditor}:{setEditor:(editor:Editor)=>void}) => {
           )}
         </EditorContent>
       </div>
-      <div className="w-1/5 text-pretty">
-      <MemorizedToC items={items} editor={editor} />
-
-      </div>
-    </div>
   );
 };
 
