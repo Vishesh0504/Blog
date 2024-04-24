@@ -14,6 +14,7 @@ import { AuthProvider, User } from "../context/AuthContext";
 
 const LoadingSpinner = () => {
   const isLoading = useRouterState({ select: (s) => s.status === "pending" });
+
   return <Loading show={isLoading} />;
 };
 

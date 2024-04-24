@@ -26,7 +26,6 @@ const Onboarding = () => {
 
   const mutationUpload = useMutation({
     mutationFn: (values: data) => {
-      console.log(values);
       return axios.post(`${URL_ORIGIN}/auth/updateProfile`, values, {
         withCredentials: true,
       });
@@ -47,7 +46,6 @@ const Onboarding = () => {
     const { data } = await supabase.storage
       .from("ProfilePicturesBlog")
       .getPublicUrl(fullPath);
-    console.log(data);
     setImgURL(data.publicUrl);
   };
   const handleSupabase = async (file: File) => {

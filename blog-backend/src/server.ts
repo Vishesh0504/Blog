@@ -9,6 +9,7 @@ const logger = require("morgan");
 import { URL_ORIGIN } from "../constants";
 import { verifyAuthentication } from "./protected";
 import blogRouter from "./routes/blog/ blog.routes";
+import postRouter from "./routes/posts/posts.routes";
 const { authRouter } = require("./routes/auth/users.routes");
 const cors = require("cors");
 require("dotenv").config({ path: "../.env" });
@@ -28,6 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/auth", authRouter);
 app.use("/blog", verifyAuthentication, blogRouter);
+app.use("/post",verifyAuthentication,postRouter);
 https
   .createServer(
     {

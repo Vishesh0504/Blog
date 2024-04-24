@@ -1,10 +1,11 @@
 .tiptap{
-    width: 100%;
+
     height: 100vh;
     overflow-y: auto;
+
     /* padding: 2rem; */
     padding-block: 1.5rem;
-    @apply border-t border-slate-400 dark:border-slate-700 outline-none ;
+    @apply border-t border-slate-400 dark:border-slate-700 outline-none w-[750px];
 }
 
 .tiptap h1{
