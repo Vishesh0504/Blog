@@ -22,4 +22,7 @@ const createPost = async (req: Request, res: Response) => {
     }
 }
 
+
+
+
 export { createPost}
